@@ -1,0 +1,40 @@
+{
+  "links": [
+    {
+      "name": "Email",
+      "icon": "Mail",
+      "href": "mailto:your.email@example.com",
+      "handle": "your.email@example.com",
+      "description": "Drop me a line",
+      "color": "hover:text-red-500",
+      "primary": true
+    },
+    {
+      "name": "X (Twitter)",
+      "icon": "Twitter",
+      "href": "https://x.com/yourusername",
+      "handle": "@yourusername",
+      "description": "Follow my journey",
+      "color": "hover:text-blue-500",
+      "primary": true
+    },
+    {
+      "name": "GitHub",
+      "icon": "Github",
+      "href": "https://github.com/yourusername",
+      "handle": "@yourusername",
+      "description": "Check out my code",
+      "color": "hover:text-gray-900 dark:hover:text-gray-100",
+      "primary": true
+    },
+    {
+      "name": "LinkedIn",
+      "icon": "Linkedin",
+      "href": "https://linkedin.com/in/yourprofile",
+      "handle": "yourprofile",
+      "description": "Let's connect professionally",
+      "color": "hover:text-blue-600",
+      "primary": true
+    }
+  ]
+}

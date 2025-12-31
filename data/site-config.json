@@ -1,0 +1,51 @@
+{
+  "personal": {
+    "name": "Your Name",
+    "title": "Software Developer",
+    "email": "your.email@example.com",
+    "location": "Your City, State",
+    "company": "Your Company",
+    "role": "Your Current Role",
+    "previousRole": "Your Previous Role",
+    "avatar": "/placeholder.svg?height=128&width=128"
+  },
+  "hero": {
+    "title": {
+      "line1": "Software Developer",
+      "line2": "& Problem Solver"
+    },
+    "description": "Passionate about creating innovative solutions and building exceptional user experiences. Let's build something amazing together.",
+    "cta": {
+      "primary": {
+        "text": "View Projects",
+        "href": "#work"
+      },
+      "secondary": {
+        "text": "Read Blog",
+        "href": "#blog"
+      }
+    },
+    "technologies": ["React", "Next.js", "TypeScript", "Node.js", "Python", "PostgreSQL"]
+  },
+  "contact": {
+    "availability": {
+      "status": "available",
+      "message": "Open to new opportunities and interesting projects"
+    },
+    "responseTime": "I typically respond within 24-48 hours across all platforms",
+    "bestTopics": [
+      "Web development projects",
+      "Technical consulting",
+      "Collaboration opportunities",
+      "Open source contributions"
+    ],
+    "cta": {
+      "title": "Ready to Build Something Amazing?",
+      "description": "Whether you have a project in mind, need technical expertise, or want to discuss development opportunities, I'd love to hear from you."
+    }
+  },
+  "footer": {
+    "copyright": "Your Name. All rights reserved.",
+    "builtWith": "Built with ❤️ using Next.js, TypeScript, and Tailwind CSS"
+  }
+}

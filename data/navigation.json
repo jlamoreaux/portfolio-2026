@@ -1,0 +1,24 @@
+{
+  "main": [
+    {
+      "name": "Work",
+      "href": "/projects",
+      "description": "Featured projects and case studies"
+    },
+    {
+      "name": "Blog",
+      "href": "#blog",
+      "description": "Thoughts on software development and technology"
+    },
+    {
+      "name": "Uses",
+      "href": "/uses",
+      "description": "Tools and equipment I use daily"
+    },
+    {
+      "name": "Connect",
+      "href": "#contact",
+      "description": "Get in touch through social platforms"
+    }
+  ]
+}

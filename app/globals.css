@@ -1,0 +1,246 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 21 90% 48%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 21 90% 48%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 21 90% 48%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 21 90% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-orange-600 to-amber-500 bg-clip-text text-transparent;
+  }
+
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/50 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary/70;
+}
+
+/* Particle animation */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.6;
+  animation: float 6s ease-in-out infinite;
+}
+
+.particle:nth-child(odd) {
+  animation-delay: -2s;
+}
+
+.particle:nth-child(even) {
+  animation-delay: -4s;
+}
+
+/* Progress bar */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #EA580C, #F59E0B);
+  transform-origin: 0%;
+  z-index: 1000;
+}
+
+/* Terminal styles */
+.terminal {
+  font-family: var(--font-jetbrains-mono), monospace;
+  background: #1a1a1a;
+  color: #00ff00;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+.terminal-cursor {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Matrix rain effect */
+.matrix-rain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.matrix-column {
+  position: absolute;
+  top: -100%;
+  width: 20px;
+  height: 100vh;
+  animation: matrix-fall 3s linear infinite;
+}
+
+.matrix-char {
+  display: block;
+  font-size: 14px;
+  line-height: 1.2;
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+  opacity: 0.8;
+}
+
+@keyframes matrix-fall {
+  0% {
+    transform: translateY(-100vh);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Custom animations for entrance effects */
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

@@ -1,0 +1,43 @@
+{
+  "work": {
+    "title": "Featured Projects",
+    "description": "A collection of projects showcasing my development skills and experience",
+    "filterLabel": "Filter by category"
+  },
+  "blog": {
+    "title": "Latest Blog Posts",
+    "description": "Thoughts on software development, technology trends, and lessons learned",
+    "viewAllText": "View All Posts"
+  },
+  "uses": {
+    "title": "What I Use",
+    "description": "Tools, hardware, and software that power my development workflow",
+    "lastUpdated": "January 2024",
+    "categories": [
+      {
+        "name": "Hardware",
+        "icon": "Monitor",
+        "color": "bg-blue-500"
+      },
+      {
+        "name": "Software",
+        "icon": "Code",
+        "color": "bg-amber-500"
+      },
+      {
+        "name": "Development Tools",
+        "icon": "Wrench",
+        "color": "bg-orange-600"
+      },
+      {
+        "name": "Office Setup",
+        "icon": "Coffee",
+        "color": "bg-orange-400"
+      }
+    ]
+  },
+  "contact": {
+    "title": "Let's Connect",
+    "description": "Interested in collaborating or have questions about development? Reach out through any of these channels."
+  }
+}
