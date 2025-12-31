@@ -2,6 +2,16 @@ import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
+// Sanitize error messages to prevent token/secret leakage
+function sanitizeError(error: unknown): string {
+  if (!(error instanceof Error)) return 'Unknown error'
+  let message = error.message
+  message = message.replace(/[a-zA-Z0-9]{40,}/g, '[REDACTED]')
+  message = message.replace(/token=[^&\s]+/gi, 'token=[REDACTED]')
+  message = message.replace(/Bearer\s+[a-zA-Z0-9._-]+/gi, 'Bearer [REDACTED]')
+  return message
+}
+
 // Validate environment variables
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
@@ -54,7 +64,7 @@ export function urlFor(source: SanityImageSource) {
     }
     return builder.image(source);
   } catch (error) {
-    console.warn("Error building image URL:", error);
+    console.warn("Error building image URL:", sanitizeError(error));
     return createStub();
   }
 }
@@ -70,7 +80,7 @@ async function safeFetch<T>(query: string, params?: any): Promise<T[]> {
     const result = await client.fetch<T[]>(query, params);
     return result || [];
   } catch (error) {
-    console.error("Sanity fetch error:", error);
+    console.error("Sanity fetch error:", sanitizeError(error));
     return [];
   }
 }
@@ -193,7 +203,7 @@ export async function fetchSiteSettings() {
   try {
     return await client.fetch(siteSettingsQuery);
   } catch (error) {
-    console.error("Error fetching site settings:", error);
+    console.error("Error fetching site settings:", sanitizeError(error));
     return null;
   }
 }
@@ -246,7 +256,7 @@ export async function fetchProjectBySlug(slug: string) {
     if (!projectId || !dataset) return null;
     return await client.fetch(projectBySlugQuery, { slug });
   } catch (error) {
-    console.error("Error fetching project by slug:", error);
+    console.error("Error fetching project by slug:", sanitizeError(error));
     return null;
   }
 }
@@ -256,7 +266,7 @@ export async function fetchBlogPostBySlug(slug: string) {
     if (!projectId || !dataset) return null;
     return await client.fetch(blogPostBySlugQuery, { slug });
   } catch (error) {
-    console.error("Error fetching blog post by slug:", error);
+    console.error("Error fetching blog post by slug:", sanitizeError(error));
     return null;
   }
 }

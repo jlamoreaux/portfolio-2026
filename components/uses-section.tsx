@@ -28,7 +28,7 @@ export function UsesSection({ initialUsesItems, isStandalonePage = false }: Uses
   ]
 
   return (
-    <section className={`py-20 ${isStandalonePage ? "" : "bg-muted/30"}`}>
+    <section id={isStandalonePage ? undefined : "uses"} className={`py-20 ${isStandalonePage ? "" : "bg-muted/30"}`}>
       <div className="container mx-auto px-4">
         {/* Back button for standalone page */}
         {isStandalonePage && (
