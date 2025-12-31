@@ -10,7 +10,8 @@
     "seed": "tsx -r dotenv/config scripts/seed-data.ts",
     "build:cf": "opennextjs-cloudflare build",
     "preview:cf": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy:cf": "mv app/studio app/_studio-disabled 2>/dev/null; EXCLUDE_STUDIO=1 opennextjs-cloudflare build; mv app/_studio-disabled app/studio 2>/dev/null; opennextjs-cloudflare deploy"
+    "deploy:cf": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "deploy:cf:no-studio": "mv app/studio app/_studio-disabled 2>/dev/null; EXCLUDE_STUDIO=1 opennextjs-cloudflare build; mv app/_studio-disabled app/studio 2>/dev/null; opennextjs-cloudflare deploy"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",

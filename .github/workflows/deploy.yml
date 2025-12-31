@@ -1,0 +1,91 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy_site:
+        description: 'Deploy site to Cloudflare Workers'
+        type: boolean
+        default: true
+      deploy_studio:
+        description: 'Deploy Sanity Studio'
+        type: boolean
+        default: false
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      site: ${{ steps.filter.outputs.site }}
+      studio: ${{ steps.filter.outputs.studio }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            site:
+              - 'app/**'
+              - 'components/**'
+              - 'lib/**'
+              - 'public/**'
+              - 'package.json'
+              - 'next.config.js'
+              - 'tailwind.config.js'
+              - '!app/studio/**'
+            studio:
+              - 'app/studio/**'
+              - 'sanity/**'
+              - 'sanity.config.ts'
+              - 'sanity.cli.ts'
+
+  deploy-site:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.site == 'true' || github.event.inputs.deploy_site == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Exclude studio and build
+        run: |
+          mv app/studio app/_studio-disabled
+          npx opennextjs-cloudflare build
+          mv app/_studio-disabled app/studio
+
+      - name: Deploy to Cloudflare Workers
+        run: npx opennextjs-cloudflare deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  deploy-studio:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.studio == 'true' || github.event.inputs.deploy_studio == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy Sanity Studio
+        run: npx sanity deploy --no-build
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
