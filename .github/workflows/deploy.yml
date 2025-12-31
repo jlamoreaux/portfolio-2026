@@ -86,6 +86,6 @@ jobs:
         run: npm ci
 
       - name: Deploy Sanity Studio
-        run: npx sanity deploy --no-build
+        run: npx sanity deploy -y
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
