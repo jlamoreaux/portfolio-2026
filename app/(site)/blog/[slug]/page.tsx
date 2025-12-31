@@ -136,6 +136,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: BlogPostPageProps) {
   const { slug } = await params
   const post = await getBlogPostBySlug(slug)
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jlmx.dev"
 
   if (!post) {
     return {
@@ -143,9 +144,48 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
     }
   }
 
+  const title = post.seo?.metaTitle || post.title
+  const description = post.seo?.metaDescription || post.excerpt
+
+  // Get OG image from featured image
+  const getOgImageUrl = () => {
+    if (!post.image) return `${siteUrl}/og-image.png`
+    if (typeof post.image === 'string') return post.image
+    if (post.image.asset) {
+      return urlFor(post.image)
+        .width(1200)
+        .height(630)
+        .fit('crop')
+        .auto('format')
+        .url()
+    }
+    return `${siteUrl}/og-image.png`
+  }
+  const ogImageUrl = getOgImageUrl()
+
   return {
-    title: post.seo?.metaTitle || post.title,
-    description: post.seo?.metaDescription || post.excerpt,
+    title,
+    description,
+    openGraph: {
+      type: "article",
+      title,
+      description,
+      url: `${siteUrl}/blog/${slug}`,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImageUrl],
+    },
   }
 }
 
