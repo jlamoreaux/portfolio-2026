@@ -124,7 +124,12 @@ const blogPostsQuery = `
     "slug": slug.current,
     excerpt,
     content,
-    "image": image.asset->url,
+    image {
+      asset,
+      hotspot,
+      crop,
+      alt
+    },
     "categories": categories[]->{_id, title, "slug": slug.current},
     readingTime,
     featured,

@@ -86,7 +86,7 @@ export function Header({ siteConfig: propConfig }: HeaderProps) {
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center gap-3">
           <Image
             src="/logo.webp"
             alt={siteConfig.personal.name}
@@ -95,6 +95,7 @@ export function Header({ siteConfig: propConfig }: HeaderProps) {
             className="h-8 w-auto dark:invert-0 invert"
             priority
           />
+          <span className="text-xl font-bold">{siteConfig.personal.name}</span>
         </Link>
 
         {/* Desktop Navigation */}
