@@ -145,10 +145,12 @@ export function BlogSection({ initialPosts, initialCategories }: BlogSectionProp
           viewport={{ once: true }}
           className="text-center mt-12"
         >
-          <Button size="lg" variant="outline">
-            {sections.blog.viewAllText}
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+          <Link href="/blog">
+            <Button size="lg" variant="outline">
+              {sections.blog.viewAllText}
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
         </motion.div>
       </div>
     </section>

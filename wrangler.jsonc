@@ -7,5 +7,9 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
-  }
+  },
+  "routes": [
+    { "pattern": "jlmx.dev/*", "zone_name": "jlmx.dev" },
+    { "pattern": "www.jlmx.dev/*", "zone_name": "jlmx.dev" }
+  ]
 }
