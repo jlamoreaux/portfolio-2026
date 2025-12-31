@@ -10,7 +10,7 @@
     "seed": "tsx -r dotenv/config scripts/seed-data.ts",
     "build:cf": "opennextjs-cloudflare build",
     "preview:cf": "opennextjs-cloudflare build && wrangler dev",
-    "deploy:cf": "mv app/studio app/_studio-disabled 2>/dev/null; EXCLUDE_STUDIO=1 opennextjs-cloudflare build; mv app/_studio-disabled app/studio 2>/dev/null; mv .open-next/worker.js .open-next/_worker.js && wrangler pages deploy --project-name=dev-portfolio"
+    "deploy:cf": "mv app/studio app/_studio-disabled 2>/dev/null; EXCLUDE_STUDIO=1 opennextjs-cloudflare build; mv app/_studio-disabled app/studio 2>/dev/null; mv .open-next/worker.js .open-next/_worker.js && cp -r .open-next/assets/* .open-next/ && wrangler pages deploy --project-name=dev-portfolio"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
