@@ -22,23 +22,41 @@ export async function generateMetadata(): Promise<Metadata> {
   const { siteSettings } = await getPortfolioData()
   const config = transformSiteSettings(siteSettings)
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dev-portfolio-89a.pages.dev"
+
   return {
     title: `${config.personal.name} - ${config.personal.title}`,
     description: config.hero.description,
     keywords: ["Software Developer", "Web Developer", "React", "Next.js", "TypeScript", "Full-Stack"],
     authors: [{ name: config.personal.name }],
     creator: config.personal.name,
+    metadataBase: new URL(siteUrl),
+    icons: {
+      icon: "/favicon.png",
+      shortcut: "/favicon.png",
+      apple: "/favicon.png",
+    },
     openGraph: {
       type: "website",
       locale: "en_US",
+      url: siteUrl,
       title: `${config.personal.name} - ${config.personal.title}`,
       description: config.hero.description,
       siteName: `${config.personal.name} Portfolio`,
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: `${config.personal.name} - ${config.personal.title}`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: `${config.personal.name} - ${config.personal.title}`,
       description: config.hero.description,
+      images: ["/og-image.png"],
     },
     robots: {
       index: true,
@@ -51,7 +69,6 @@ export async function generateMetadata(): Promise<Metadata> {
         "max-snippet": -1,
       },
     },
-    generator: 'v0.dev'
   }
 }
 

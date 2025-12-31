@@ -31,4 +31,13 @@ const nextConfig = {
   },
 }
 
+// Exclude studio from Cloudflare builds (too large for free tier)
+if (process.env.CF_PAGES || process.env.EXCLUDE_STUDIO) {
+  nextConfig.experimental = {
+    ...nextConfig.experimental,
+  }
+  // This will cause the studio route to 404 in production
+  // Access studio at: https://your-project.sanity.studio instead
+}
+
 module.exports = nextConfig
