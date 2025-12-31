@@ -95,7 +95,7 @@ export default async function BlogPage() {
 }
 
 export const metadata = {
-  title: "Blog - Joel Lamoreaux",
+  title: "Blog - Jordan Lamoreaux",
   description: "Thoughts, tutorials, and insights on software development",
 }
 

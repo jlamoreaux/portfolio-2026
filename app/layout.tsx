@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const { siteSettings } = await getPortfolioData()
   const config = transformSiteSettings(siteSettings)
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dev-portfolio-89a.pages.dev"
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jlmx.dev"
 
   return {
     title: `${config.personal.name} - ${config.personal.title}`,
