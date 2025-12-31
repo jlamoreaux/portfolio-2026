@@ -21,9 +21,7 @@ export interface SanityImage {
 export interface Category {
   _id: string
   title: string
-  slug: {
-    current: string
-  }
+  slug: string | { current: string }
   description?: string
   color?: string
 }
@@ -31,9 +29,7 @@ export interface Category {
 export interface Project {
   _id: string
   title: string
-  slug: {
-    current: string
-  }
+  slug: string | { current: string }
   description: string
   longDescription: string
   image: SanityImage
@@ -48,9 +44,7 @@ export interface Project {
 export interface BlogPost {
   _id: string
   title: string
-  slug: {
-    current: string
-  }
+  slug: string | { current: string }
   excerpt: string
   content?: any[] // Rich text content
   image: SanityImage

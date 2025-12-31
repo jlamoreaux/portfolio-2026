@@ -8,6 +8,7 @@ import { Menu, Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { getNavigationItems, getSiteConfig, type SiteConfig } from "@/lib/config"
 
 interface HeaderProps {
@@ -85,8 +86,15 @@ export function Header({ siteConfig: propConfig }: HeaderProps) {
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-gradient">
-          {siteConfig.personal.name}
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/logo.webp"
+            alt={siteConfig.personal.name}
+            width={120}
+            height={40}
+            className="h-8 w-auto dark:invert-0 invert"
+            priority
+          />
         </Link>
 
         {/* Desktop Navigation */}

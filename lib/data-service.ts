@@ -258,3 +258,61 @@ async function getSocialLinksFromSanity(): Promise<SanitySocialLink[]> {
     return []
   }
 }
+
+// Single blog post query
+const blogPostBySlugQuery = `
+  *[_type == "blogPost" && slug.current == $slug][0] {
+    _id,
+    title,
+    "slug": slug.current,
+    excerpt,
+    content,
+    image {
+      asset,
+      hotspot,
+      crop,
+      alt
+    },
+    "categories": categories[]->{_id, title, "slug": slug.current},
+    readingTime,
+    featured,
+    publishedAt,
+    seo
+  }
+`
+
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+  try {
+    const post = await client.fetch(blogPostBySlugQuery, { slug })
+    if (post) return post
+
+    // Check fallback data
+    const fallbackPost = fallbackBlogPosts.find(p => {
+      const postSlug = typeof p.slug === 'string' ? p.slug : p.slug.current
+      return postSlug === slug
+    })
+    return fallbackPost || null
+  } catch (error) {
+    console.error('Error fetching blog post by slug:', error)
+    // Try fallback
+    const fallbackPost = fallbackBlogPosts.find(p => {
+      const postSlug = typeof p.slug === 'string' ? p.slug : p.slug.current
+      return postSlug === slug
+    })
+    return fallbackPost || null
+  }
+}
+
+export async function getAllBlogSlugs(): Promise<string[]> {
+  try {
+    const posts = await client.fetch<{ slug: string }[]>(`*[_type == "blogPost"]{ "slug": slug.current }`)
+    if (posts && posts.length > 0) {
+      return posts.map(p => p.slug)
+    }
+    // Return fallback slugs
+    return fallbackBlogPosts.map(p => typeof p.slug === 'string' ? p.slug : p.slug.current)
+  } catch (error) {
+    console.error('Error fetching blog slugs:', error)
+    return fallbackBlogPosts.map(p => typeof p.slug === 'string' ? p.slug : p.slug.current)
+  }
+}

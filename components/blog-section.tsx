@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar, Clock, ArrowRight } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import { getImageUrl } from "@/lib/image-utils"
 import { getSections } from "@/lib/config"
 import type { BlogPost, Category } from "@/lib/types"
@@ -109,9 +110,11 @@ export function BlogSection({ initialPosts, initialCategories }: BlogSectionProp
                         {post.readingTime} min read
                       </div>
                     </div>
-                    <h3 className="text-xl font-semibold group-hover:text-primary transition-colors line-clamp-2">
-                      {post.title}
-                    </h3>
+                    <Link href={`/blog/${typeof post.slug === 'string' ? post.slug : post.slug.current}`}>
+                      <h3 className="text-xl font-semibold group-hover:text-primary transition-colors line-clamp-2">
+                        {post.title}
+                      </h3>
+                    </Link>
                   </CardHeader>
                   <CardContent className="pt-0">
                     <p className="text-muted-foreground mb-4 line-clamp-3 leading-relaxed">{post.excerpt}</p>
@@ -122,10 +125,12 @@ export function BlogSection({ initialPosts, initialCategories }: BlogSectionProp
                         </Badge>
                       ))}
                     </div>
-                    <Button variant="ghost" className="group/btn p-0 h-auto font-medium">
-                      Read More
-                      <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                    </Button>
+                    <Link href={`/blog/${typeof post.slug === 'string' ? post.slug : post.slug.current}`}>
+                      <Button variant="ghost" className="group/btn p-0 h-auto font-medium">
+                        Read More
+                        <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
+                      </Button>
+                    </Link>
                   </CardContent>
                 </Card>
               </motion.div>

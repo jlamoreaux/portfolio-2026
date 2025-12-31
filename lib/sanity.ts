@@ -35,23 +35,27 @@ export const writeClient = createClient({
 
 const builder = imageUrlBuilder(client);
 
+// Chainable stub for when Sanity is not configured
+const createStub = (): any => {
+  const stub: any = {
+    url: () => "/placeholder.svg",
+  };
+  const methods = ['width', 'height', 'fit', 'crop', 'auto', 'format', 'quality'];
+  methods.forEach(method => {
+    stub[method] = () => stub;
+  });
+  return stub;
+};
+
 export function urlFor(source: SanityImageSource) {
   try {
     if (!source || !projectId) {
-      return {
-        url: () => "/placeholder.svg",
-        width: () => ({ url: () => "/placeholder.svg" }),
-        height: () => ({ url: () => "/placeholder.svg" }),
-      };
+      return createStub();
     }
     return builder.image(source);
   } catch (error) {
     console.warn("Error building image URL:", error);
-    return {
-      url: () => "/placeholder.svg",
-      width: () => ({ url: () => "/placeholder.svg" }),
-      height: () => ({ url: () => "/placeholder.svg" }),
-    };
+    return createStub();
   }
 }
 
