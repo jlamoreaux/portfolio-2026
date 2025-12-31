@@ -62,6 +62,9 @@ jobs:
           mv app/studio app/_studio-disabled
           npx opennextjs-cloudflare build
           mv app/_studio-disabled app/studio
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
 
       - name: Deploy to Cloudflare Workers
         run: npx opennextjs-cloudflare deploy
@@ -89,3 +92,5 @@ jobs:
         run: npx sanity deploy -y
         env:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}

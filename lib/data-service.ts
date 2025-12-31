@@ -2,6 +2,21 @@ import { client } from "./sanity"
 import { fallbackProjects, fallbackBlogPosts, fallbackUsesItems, fallbackCategories, fallbackSiteSettings, fallbackSocialLinks } from "./fallback-data"
 import type { Project, BlogPost, UsesItem, Category, SiteSettings, SanitySocialLink } from "./types"
 
+// Sanitize error messages to prevent token/secret leakage
+function sanitizeError(error: unknown): string {
+  if (!(error instanceof Error)) return 'Unknown error'
+
+  let message = error.message
+  // Remove anything that looks like a token (long alphanumeric strings)
+  message = message.replace(/[a-zA-Z0-9]{40,}/g, '[REDACTED]')
+  // Remove URLs with tokens in query params
+  message = message.replace(/token=[^&\s]+/gi, 'token=[REDACTED]')
+  // Remove Bearer tokens
+  message = message.replace(/Bearer\s+[a-zA-Z0-9._-]+/gi, 'Bearer [REDACTED]')
+
+  return message
+}
+
 interface PortfolioData {
   projects: Project[]
   blogPosts: BlogPost[]
@@ -59,9 +74,9 @@ export async function getPortfolioData(): Promise<PortfolioData> {
       errors: [],
     }
   } catch (error) {
-    console.error("Failed to fetch from Sanity:", error)
+    console.error("Failed to fetch from Sanity:", sanitizeError(error))
     isUsingFallback = true
-    errors.push(`Sanity CMS connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    errors.push(`Sanity CMS connection failed: ${sanitizeError(error)}`)
 
     return {
       projects: fallbackProjects,
@@ -167,7 +182,7 @@ async function getProjectsFromSanity(): Promise<Project[]> {
     const projects = await client.fetch(projectsQuery)
     return projects || []
   } catch (error) {
-    console.error('Error fetching projects from Sanity:', error)
+    console.error('Error fetching projects from Sanity:', sanitizeError(error))
     return []
   }
 }
@@ -177,7 +192,7 @@ async function getBlogPostsFromSanity(): Promise<BlogPost[]> {
     const posts = await client.fetch(blogPostsQuery)
     return posts || []
   } catch (error) {
-    console.error('Error fetching blog posts from Sanity:', error)
+    console.error('Error fetching blog posts from Sanity:', sanitizeError(error))
     return []
   }
 }
@@ -187,7 +202,7 @@ async function getUsesItemsFromSanity(): Promise<UsesItem[]> {
     const items = await client.fetch(usesItemsQuery)
     return items || []
   } catch (error) {
-    console.error('Error fetching uses items from Sanity:', error)
+    console.error('Error fetching uses items from Sanity:', sanitizeError(error))
     return []
   }
 }
@@ -197,7 +212,7 @@ async function getCategoriesFromSanity(): Promise<Category[]> {
     const categories = await client.fetch(categoriesQuery)
     return categories || []
   } catch (error) {
-    console.error('Error fetching categories from Sanity:', error)
+    console.error('Error fetching categories from Sanity:', sanitizeError(error))
     return []
   }
 }
@@ -249,7 +264,7 @@ async function getSiteSettingsFromSanity(): Promise<SiteSettings | null> {
     const settings = await client.fetch(siteSettingsQuery)
     return settings || null
   } catch (error) {
-    console.error('Error fetching site settings from Sanity:', error)
+    console.error('Error fetching site settings from Sanity:', sanitizeError(error))
     return null
   }
 }
@@ -259,7 +274,7 @@ async function getSocialLinksFromSanity(): Promise<SanitySocialLink[]> {
     const links = await client.fetch(socialLinksQuery)
     return links || []
   } catch (error) {
-    console.error('Error fetching social links from Sanity:', error)
+    console.error('Error fetching social links from Sanity:', sanitizeError(error))
     return []
   }
 }
@@ -298,7 +313,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
     })
     return fallbackPost || null
   } catch (error) {
-    console.error('Error fetching blog post by slug:', error)
+    console.error('Error fetching blog post by slug:', sanitizeError(error))
     // Try fallback
     const fallbackPost = fallbackBlogPosts.find(p => {
       const postSlug = typeof p.slug === 'string' ? p.slug : p.slug.current
@@ -317,7 +332,7 @@ export async function getAllBlogSlugs(): Promise<string[]> {
     // Return fallback slugs
     return fallbackBlogPosts.map(p => typeof p.slug === 'string' ? p.slug : p.slug.current)
   } catch (error) {
-    console.error('Error fetching blog slugs:', error)
+    console.error('Error fetching blog slugs:', sanitizeError(error))
     return fallbackBlogPosts.map(p => typeof p.slug === 'string' ? p.slug : p.slug.current)
   }
 }

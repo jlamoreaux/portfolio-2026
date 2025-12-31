@@ -1,6 +1,7 @@
 import { HeroSection } from "@/components/hero-section"
 import { ProjectPreview } from "@/components/project-preview"
 import { BlogSection } from "@/components/blog-section"
+import { UsesSection } from "@/components/uses-section"
 import { ContactSection } from "@/components/contact-section"
 import { Footer } from "@/components/footer"
 import { KonamiTerminal } from "@/components/konami-terminal"
@@ -10,7 +11,7 @@ import { getPortfolioData } from "@/lib/data-service"
 import { transformSiteSettings, transformSocialLinks } from "@/lib/config"
 
 export default async function Home() {
-  const { projects, blogPosts, categories, siteSettings, socialLinks, isUsingFallback, errors } = await getPortfolioData()
+  const { projects, blogPosts, usesItems, categories, siteSettings, socialLinks, isUsingFallback, errors } = await getPortfolioData()
 
   const siteConfig = transformSiteSettings(siteSettings)
   const socialLinksConfig = transformSocialLinks(socialLinks)
@@ -41,6 +42,16 @@ export default async function Home() {
         }
       >
         <BlogSection initialPosts={blogPosts} initialCategories={categories} />
+      </ErrorBoundary>
+
+      <ErrorBoundary
+        fallback={
+          <div className="py-20 text-center">
+            <p className="text-muted-foreground">Uses section temporarily unavailable</p>
+          </div>
+        }
+      >
+        <UsesSection initialUsesItems={usesItems} />
       </ErrorBoundary>
 
       <ErrorBoundary>
