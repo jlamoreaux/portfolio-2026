@@ -11,7 +11,7 @@ function isAcceptingMedia(acceptHeader: string, mediaType: string): boolean {
   const types = acceptHeader.split(",").map((t) => t.trim())
 
   let mediaTypeQ: number | null = null
-  let wildcardQ = 1.0 // Default q-value for */*
+  let wildcardQ = 0.0 // Only set when */* is explicitly present
 
   for (const type of types) {
     const [media, ...params] = type.split(";").map((p) => p.trim())
