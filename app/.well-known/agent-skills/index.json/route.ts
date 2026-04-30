@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server"
+import { readFile } from "fs/promises"
+import { join } from "path"
 
 async function sha256hex(content: string): Promise<string> {
   const encoder = new TextEncoder()
@@ -8,85 +10,19 @@ async function sha256hex(content: string): Promise<string> {
   return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
 }
 
-const PORTFOLIO_SKILL = `# Skill: Get Portfolio Content as Markdown
-
-## Description
-
-Fetch any page of jlmx.dev as clean Markdown by sending an HTTP request with
-\`Accept: text/markdown\`. The server performs content negotiation and returns
-the page's content in Markdown format suitable for LLM consumption.
-
-## Usage
-
-\`\`\`http
-GET / HTTP/1.1
-Host: jlmx.dev
-Accept: text/markdown
-\`\`\`
-
-### Supported paths
-
-| Path | Description |
-|------|-------------|
-| \`/\` | Homepage — bio, featured projects, recent posts |
-| \`/blog\` | All blog posts with excerpts |
-| \`/blog/{slug}\` | Single blog post |
-| \`/projects\` | All projects with full descriptions |
-| \`/uses\` | Tools and gear used daily |
-
-### Response
-
-- **Content-Type:** \`text/markdown; charset=utf-8\`
-- **Cache-Control:** \`public, max-age=3600, stale-while-revalidate=86400\`
-- **Vary:** \`Accept\`
-
-## Direct endpoint
-
-Alternatively, use \`/api/markdown?path={path}\` directly:
-
-\`\`\`
-GET /api/markdown?path=/blog/my-post-slug
-\`\`\`
-`
-
-const HEALTH_SKILL = `# Skill: Health Check
-
-## Description
-
-Check the operational status of jlmx.dev and its CMS connection.
-
-## Usage
-
-\`\`\`http
-GET /api/health HTTP/1.1
-Host: jlmx.dev
-Accept: application/json
-\`\`\`
-
-## Response
-
-\`\`\`json
-{
-  "status": "healthy" | "degraded" | "warning",
-  "message": "string",
-  "sanity": true | false,
-  "timestamp": "ISO 8601"
-}
-\`\`\`
-
-| Status | Meaning |
-|--------|---------|
-| \`healthy\` | Site and CMS are fully operational |
-| \`degraded\` | Site is up but CMS is unavailable; showing cached content |
-| \`warning\` | Sanity CMS not configured |
-`
-
 export async function GET() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jlmx.dev"
 
+  // Read the actual published markdown files to ensure hash integrity
+  const publicDir = join(process.cwd(), "public", ".well-known", "agent-skills")
+  const [portfolioContent, healthContent] = await Promise.all([
+    readFile(join(publicDir, "portfolio.md"), "utf-8"),
+    readFile(join(publicDir, "health.md"), "utf-8"),
+  ])
+
   const [portfolioHash, healthHash] = await Promise.all([
-    sha256hex(PORTFOLIO_SKILL),
-    sha256hex(HEALTH_SKILL),
+    sha256hex(portfolioContent),
+    sha256hex(healthContent),
   ])
 
   const index = {

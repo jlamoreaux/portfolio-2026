@@ -21,12 +21,35 @@ export async function GET(request: NextRequest) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jlmx.dev"
 
   try {
-    const { projects, blogPosts, siteSettings } = await getPortfolioData()
-    const config = transformSiteSettings(siteSettings)
     let markdown = ""
 
-    if (path === "/" || path === "") {
-      markdown = `# ${config.personal.name} — ${config.personal.title}
+    // Optimize: only fetch portfolio data for routes that need it
+    if (path.startsWith("/blog/")) {
+      // Single blog post - skip getPortfolioData()
+      const slug = path.replace("/blog/", "")
+      const post = await getBlogPostBySlug(slug)
+
+      if (!post) {
+        return new NextResponse("Not found", { status: 404 })
+      }
+
+      markdown = `# ${post.title}
+
+*${new Date(post.publishedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · ${post.readingTime} min read*
+
+${post.excerpt || ""}
+
+---
+
+*Full content available at [${siteUrl}/blog/${slug}](${siteUrl}/blog/${slug})*
+`
+    } else {
+      // All other routes need portfolio data
+      const { projects, blogPosts, siteSettings } = await getPortfolioData()
+      const config = transformSiteSettings(siteSettings)
+
+      if (path === "/" || path === "") {
+        markdown = `# ${config.personal.name} — ${config.personal.title}
 
 ${config.hero.description}
 
@@ -65,8 +88,8 @@ ${post.excerpt || ""}
 
 [View all projects](${siteUrl}/projects) · [Read the blog](${siteUrl}/blog) · [Uses](${siteUrl}/uses)
 `
-    } else if (path === "/blog") {
-      markdown = `# Blog — ${config.personal.name}
+      } else if (path === "/blog") {
+        markdown = `# Blog — ${config.personal.name}
 
 ${blogPosts
   .map((post) => {
@@ -79,8 +102,8 @@ ${post.excerpt || ""}
   })
   .join("\n\n")}
 `
-    } else if (path === "/projects") {
-      markdown = `# Projects — ${config.personal.name}
+      } else if (path === "/projects") {
+        markdown = `# Projects — ${config.personal.name}
 
 ${projects
   .map((p) => {
@@ -93,29 +116,12 @@ ${p.longDescription || p.description}
   })
   .join("\n\n")}
 `
-    } else if (path.startsWith("/blog/")) {
-      const slug = path.replace("/blog/", "")
-      const post = await getBlogPostBySlug(slug)
-
-      if (!post) {
-        return new NextResponse("Not found", { status: 404 })
-      }
-
-      markdown = `# ${post.title}
-
-*${new Date(post.publishedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} · ${post.readingTime} min read*
-
-${post.excerpt || ""}
-
----
-
-*Full content available at [${siteUrl}/blog/${slug}](${siteUrl}/blog/${slug})*
-`
-    } else {
-      markdown = `# ${config.personal.name} — Portfolio
+      } else {
+        markdown = `# ${config.personal.name} — Portfolio
 
 Visit [${siteUrl}](${siteUrl}) to view the full portfolio.
 `
+      }
     }
 
     return new NextResponse(markdown, {

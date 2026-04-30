@@ -21,7 +21,8 @@ export function WebMCPProvider() {
   useEffect(() => {
     if (typeof navigator === "undefined" || !navigator.modelContext) return
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jlmx.dev"
+    // Use relative URLs in browser, fallback for server-side only
+    const siteUrl = typeof window !== "undefined" ? "" : (process.env.NEXT_PUBLIC_SITE_URL || "https://jlmx.dev")
 
     try {
       navigator.modelContext.provideContext({

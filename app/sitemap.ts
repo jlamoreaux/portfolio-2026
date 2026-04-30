@@ -3,7 +3,15 @@ import { getAllBlogSlugs } from "@/lib/data-service"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jlmx.dev"
-  const blogSlugs = await getAllBlogSlugs()
+
+  // Wrap external CMS call in try/catch to handle Sanity outages
+  let blogSlugs: string[] = []
+  try {
+    blogSlugs = await getAllBlogSlugs()
+  } catch (error) {
+    console.error("Failed to fetch blog slugs for sitemap, using empty array:", error)
+    blogSlugs = []
+  }
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -33,7 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   const blogRoutes: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
-    url: `${siteUrl}/blog/${slug}`,
+    url: `${siteUrl}/blog/${encodeURIComponent(slug)}`,
     lastModified: new Date(),
     changeFrequency: "monthly",
     priority: 0.7,
