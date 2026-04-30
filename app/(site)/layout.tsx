@@ -4,6 +4,7 @@ import { Header } from "@/components/header"
 import { ScrollProgress } from "@/components/scroll-progress"
 import { CursorTrail } from "@/components/cursor-trail"
 import { ClientErrorMonitoring } from "@/components/client-error-monitoring"
+import { WebMCPProvider } from "@/components/webmcp-provider"
 import { getPortfolioData } from "@/lib/data-service"
 import { transformSiteSettings } from "@/lib/config"
 
@@ -18,6 +19,7 @@ export default async function SiteLayout({
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
       <ClientErrorMonitoring />
+      <WebMCPProvider />
       <ScrollProgress />
       <CursorTrail />
       <Header siteConfig={siteConfig} />
