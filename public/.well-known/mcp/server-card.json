@@ -1,0 +1,42 @@
+{
+  "serverInfo": {
+    "name": "jlmx.dev portfolio",
+    "version": "1.0.0",
+    "description": "Personal portfolio and blog for a software developer specializing in AI/ML and full-stack development."
+  },
+  "transport": {
+    "type": "http",
+    "endpoint": "https://jlmx.dev/api/mcp"
+  },
+  "capabilities": {
+    "resources": true,
+    "tools": false,
+    "prompts": false
+  },
+  "resources": [
+    {
+      "uri": "https://jlmx.dev/",
+      "name": "Portfolio homepage",
+      "description": "Bio, featured projects, and recent blog posts. Request with Accept: text/markdown for agent-friendly format.",
+      "mimeType": "text/html"
+    },
+    {
+      "uri": "https://jlmx.dev/blog",
+      "name": "Blog index",
+      "description": "All published blog posts. Supports Accept: text/markdown.",
+      "mimeType": "text/html"
+    },
+    {
+      "uri": "https://jlmx.dev/projects",
+      "name": "Projects",
+      "description": "Full project portfolio. Supports Accept: text/markdown.",
+      "mimeType": "text/html"
+    },
+    {
+      "uri": "https://jlmx.dev/api/health",
+      "name": "Health check",
+      "description": "Site and CMS operational status.",
+      "mimeType": "application/json"
+    }
+  ]
+}
