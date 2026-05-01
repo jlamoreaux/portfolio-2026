@@ -31,27 +31,6 @@ const nextConfig = {
           },
         ],
       },
-      {
-        // Vary: Accept on pages that support markdown content negotiation
-        source: "/",
-        headers: [{ key: "Vary", value: "Accept" }],
-      },
-      {
-        source: "/blog",
-        headers: [{ key: "Vary", value: "Accept" }],
-      },
-      {
-        source: "/blog/:slug",
-        headers: [{ key: "Vary", value: "Accept" }],
-      },
-      {
-        source: "/projects",
-        headers: [{ key: "Vary", value: "Accept" }],
-      },
-      {
-        source: "/uses",
-        headers: [{ key: "Vary", value: "Accept" }],
-      },
     ]
   },
 }
