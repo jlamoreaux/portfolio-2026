@@ -4,51 +4,42 @@ const MARKDOWN_PATHS = ["/", "/blog", "/projects", "/uses"]
 const BLOG_POST_RE = /^\/blog\/[a-z0-9]+(?:-[a-z0-9]+)*$/i
 
 /**
- * Parse Accept header and check if a media type is acceptable (q > 0).
+ * Get the quality value a client explicitly assigns to a media type in the
+ * Accept header. Wildcard entries are intentionally ignored: a browser
+ * sending a catch-all wildcard at q=0.8 is asking for "anything" as a
+ * fallback behind text/html, not requesting markdown. Returns null if the
+ * media type is not explicitly listed.
  */
-function isAcceptingMedia(acceptHeader: string, mediaType: string): boolean {
-  if (!acceptHeader) return false
+function explicitQ(acceptHeader: string, mediaType: string): number | null {
+  if (!acceptHeader) return null
 
-  const types = acceptHeader.split(",").map((t) => t.trim().toLowerCase())
-
-  let mediaTypeQ: number | null = null
-  let wildcardQ = 0.0
-
-  for (const type of types) {
-    const [media, ...params] = type.split(";").map((p) => p.trim())
+  for (const part of acceptHeader.split(",")) {
+    const [media, ...params] = part.trim().toLowerCase().split(";").map((p) => p.trim())
+    if (media !== mediaType) continue
 
     let q = 1.0
     for (const param of params) {
       if (param.startsWith("q=")) {
         const qValue = parseFloat(param.substring(2))
-        if (!Number.isNaN(qValue)) {
-          q = qValue
-        }
+        if (!Number.isNaN(qValue)) q = qValue
       }
     }
-
-    if (media === mediaType) {
-      mediaTypeQ = q
-    }
-
-    if (media === "*/*") {
-      wildcardQ = q
-    } else if (media.includes("*")) {
-      const [mainType] = mediaType.split("/")
-      const [acceptMainType] = media.split("/")
-      if (acceptMainType === mainType || media === `${mainType}/*`) {
-        if (mediaTypeQ === null) {
-          mediaTypeQ = q
-        }
-      }
-    }
+    return q
   }
 
-  if (mediaTypeQ !== null) {
-    return mediaTypeQ > 0
-  }
+  return null
+}
 
-  return wildcardQ > 0
+/**
+ * Serve markdown only when the client explicitly prefers it over HTML.
+ * Browsers never send an explicit `text/markdown`, so they always get HTML.
+ */
+function prefersMarkdown(acceptHeader: string): boolean {
+  const markdownQ = explicitQ(acceptHeader, "text/markdown")
+  if (markdownQ === null || markdownQ <= 0) return false
+
+  const htmlQ = explicitQ(acceptHeader, "text/html") ?? 0
+  return markdownQ >= htmlQ
 }
 
 function isMarkdownPath(pathname: string) {
@@ -117,11 +108,13 @@ Additional agent discovery:
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin
-  const acceptsMarkdown = isAcceptingMedia(request.headers.get("accept") || "", "text/markdown")
+  const acceptsMarkdown = prefersMarkdown(request.headers.get("accept") || "")
 
   if (!acceptsMarkdown || !isMarkdownPath(pathname)) {
     const response = NextResponse.next()
     response.headers.set("Link", getDiscoveryLinkHeader(siteUrl))
+    // Same URL serves HTML or markdown depending on Accept; let caches key on it.
+    response.headers.append("Vary", "Accept")
     return response
   }
 
