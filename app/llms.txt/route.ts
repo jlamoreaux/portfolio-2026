@@ -11,6 +11,11 @@ function slugOf(slug: string | { current: string }): string {
   return typeof slug === "string" ? slug : slug.current
 }
 
+/** Backslash-escape characters that would break markdown link syntax. */
+function escapeMarkdownText(text: string): string {
+  return text.replace(/[\\[\]()]/g, "\\$&")
+}
+
 export async function GET() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jlmx.dev"
   const markdownUrl = (path: string) => `${siteUrl}/api/markdown?path=${encodeURIComponent(path)}`
@@ -25,12 +30,15 @@ export async function GET() {
     const projectList = projects
       .map((p) => {
         const url = p.liveUrl || p.githubUrl || `${siteUrl}/projects`
-        return `- [${p.title}](${url}): ${oneLine(p.description)}`
+        return `- [${escapeMarkdownText(p.title)}](${url}): ${escapeMarkdownText(oneLine(p.description))}`
       })
       .join("\n")
 
     const blogList = blogPosts
-      .map((post) => `- [${post.title}](${markdownUrl(`/blog/${slugOf(post.slug)}`)}): ${oneLine(post.excerpt)}`)
+      .map(
+        (post) =>
+          `- [${escapeMarkdownText(post.title)}](${markdownUrl(`/blog/${slugOf(post.slug)}`)}): ${escapeMarkdownText(oneLine(post.excerpt))}`,
+      )
       .join("\n")
 
     const body = `# ${name}
@@ -69,7 +77,8 @@ ${blogList}
         "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
       },
     })
-  } catch {
+  } catch (error) {
+    console.error("Failed to generate llms.txt:", error)
     return new NextResponse("# Error\n\nFailed to generate llms.txt.\n", {
       status: 500,
       headers: { "Content-Type": "text/plain; charset=utf-8" },
