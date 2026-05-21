@@ -1,0 +1,86 @@
+---
+import "../styles/global.css";
+import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from "emdash/ui";
+import { createPublicPageContext } from "emdash/page";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import ScrollProgress from "../components/ScrollProgress.astro";
+import CursorTrail from "../components/CursorTrail.astro";
+import KonamiTerminal from "../components/KonamiTerminal.astro";
+import { getSiteConfig } from "../lib/site";
+
+interface Props {
+	title?: string;
+	description?: string;
+	image?: string;
+	type?: "website" | "article";
+}
+
+const { title, description, image, type = "website" } = Astro.props;
+
+const config = await getSiteConfig();
+const name = config?.title ?? "Your Name";
+const role = config?.role_title ?? "Software Developer";
+const siteName = `${name} - ${role}`;
+const fullTitle = title ? `${title} - ${name}` : siteName;
+const desc = description ?? config?.hero_description ?? siteName;
+const ogImage = image ?? "/og-image.png";
+
+const pageCtx = createPublicPageContext({
+	Astro,
+	kind: "custom",
+	pageType: type,
+	title: fullTitle,
+	pageTitle: title ?? siteName,
+	description: desc,
+	canonical: Astro.url.href,
+	image: ogImage,
+	seo: { ogImage },
+	siteName: name,
+});
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{fullTitle}</title>
+		<meta name="description" content={desc} />
+		<link rel="icon" href="/favicon.png" />
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title={`${name} RSS Feed`}
+			href="/rss.xml"
+		/>
+		<EmDashHead page={pageCtx} />
+		<script is:inline>
+			// Apply theme before paint to avoid a flash (next-themes parity).
+			(function () {
+				try {
+					var t = localStorage.getItem("theme");
+					if (
+						t === "dark" ||
+						((!t || t === "system") &&
+							window.matchMedia("(prefers-color-scheme: dark)").matches)
+					) {
+						document.documentElement.classList.add("dark");
+					}
+				} catch (e) {}
+			})();
+		</script>
+	</head>
+	<body class="min-h-screen bg-background font-sans antialiased">
+		<EmDashBodyStart page={pageCtx} />
+		<ScrollProgress />
+		<CursorTrail />
+		<Header />
+		<main class="relative">
+			<slot />
+		</main>
+		<Footer />
+		<KonamiTerminal />
+		<EmDashBodyEnd page={pageCtx} />
+	</body>
+</html>

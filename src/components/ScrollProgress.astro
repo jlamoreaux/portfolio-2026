@@ -1,0 +1,14 @@
+<div class="progress-bar" id="scroll-progress"></div>
+
+<script>
+	const bar = document.getElementById("scroll-progress");
+	function update() {
+		const el = document.documentElement;
+		const max = el.scrollHeight - el.clientHeight;
+		const ratio = max > 0 ? el.scrollTop / max : 0;
+		if (bar) bar.style.transform = `scaleX(${ratio})`;
+	}
+	document.addEventListener("scroll", update, { passive: true });
+	window.addEventListener("resize", update);
+	update();
+</script>

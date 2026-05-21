@@ -16,9 +16,9 @@ Accept: application/json
 
 ```json
 {
-  "status": "healthy" | "degraded" | "warning",
+  "status": "healthy" | "degraded",
   "message": "string",
-  "sanity": true | false,
+  "cms": true | false,
   "timestamp": "ISO 8601"
 }
 ```
@@ -26,5 +26,4 @@ Accept: application/json
 | Status | Meaning |
 |--------|---------|
 | `healthy` | Site and CMS are fully operational |
-| `degraded` | Site is up but CMS is unavailable; showing cached content |
-| `warning` | Sanity CMS not configured |
+| `degraded` | Site is up but the CMS is unavailable |

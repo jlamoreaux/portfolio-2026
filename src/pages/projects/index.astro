@@ -1,0 +1,202 @@
+---
+import Base from "../../layouts/Base.astro";
+import Icon from "../../components/Icon.astro";
+import { PortableText } from "emdash/ui";
+import { getProjects } from "../../lib/site";
+
+const { projects, cacheHint } = await getProjects();
+if (cacheHint && Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const catMap = new Map<string, { label: string; count: number }>();
+for (const p of projects) {
+	for (const c of p.categories) {
+		const e = catMap.get(c.slug) ?? { label: c.label, count: 0 };
+		e.count++;
+		catMap.set(c.slug, e);
+	}
+}
+const filters = [
+	{ slug: "all", label: "All", count: projects.length },
+	...[...catMap].map(([slug, v]) => ({ slug, label: v.label, count: v.count })),
+];
+---
+
+<Base
+	title="Featured Projects"
+	description="Explore my complete portfolio of projects, from AI/ML applications to full-stack web development."
+>
+	<div class="pt-20">
+		<section class="py-20">
+			<div class="container mx-auto px-4">
+				<div class="mb-8">
+					<a
+						href="/"
+						class="group inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+					>
+						<Icon
+							name="ArrowLeft"
+							class="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform"
+						/>
+						Back to Home
+					</a>
+				</div>
+
+				<div class="text-center mb-16">
+					<h1 class="text-4xl md:text-5xl font-bold mb-4">Featured Projects</h1>
+					<p class="text-xl text-muted-foreground max-w-2xl mx-auto">
+						Explore my complete portfolio of projects, from AI/ML applications to
+						full-stack web development.
+					</p>
+					<p class="text-sm text-muted-foreground mt-4">
+						{projects.length} project{projects.length !== 1 ? "s" : ""} &bull; Updated
+						regularly
+					</p>
+				</div>
+
+				<div class="flex flex-wrap justify-center gap-4 mb-12">
+					{
+						filters.map((f, i) => (
+							<button
+								type="button"
+								data-filter={f.slug}
+								class:list={[
+									"proj-filter inline-flex items-center gap-2 h-10 px-4 text-sm font-medium rounded-md transition-colors",
+									i === 0
+										? "bg-primary text-primary-foreground"
+										: "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground",
+								]}
+							>
+								<Icon name="Filter" class="h-4 w-4" />
+								{f.label}
+								{f.slug !== "all" && (
+									<span class="ml-1 inline-flex items-center rounded-md bg-secondary text-secondary-foreground px-2 py-0.5 text-xs">
+										{f.count}
+									</span>
+								)}
+							</button>
+						))
+					}
+				</div>
+
+				<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+					{
+						projects.map((p) => (
+							<div
+								class="group perspective-1000 relative project-item"
+								data-categories={p.categories.map((c) => c.slug).join("|")}
+							>
+								<div class="relative w-full h-[400px] preserve-3d transition-transform duration-[600ms] ease-in-out group-hover:[transform:rotateY(180deg)_scale(1.05)]">
+									<div class="absolute inset-0 backface-hidden rounded-lg border bg-card text-card-foreground shadow-lg overflow-hidden flex flex-col">
+										<div class="relative h-48 overflow-hidden">
+											<img
+												src={p.featured_image?.src ?? "/placeholder.svg"}
+												alt={p.title}
+												class="object-cover w-full h-full"
+												loading="lazy"
+											/>
+											<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+											{p.featured && (
+												<span class="absolute top-3 left-3 inline-flex items-center rounded-md bg-primary text-primary-foreground px-2.5 py-0.5 text-xs font-medium">
+													Featured
+												</span>
+											)}
+										</div>
+										<div class="p-6 flex-1 flex flex-col">
+											<h3 class="text-xl font-semibold mb-2">{p.title}</h3>
+											<p class="text-muted-foreground mb-4 flex-1">
+												{p.description}
+											</p>
+											<div class="flex flex-wrap gap-2">
+												{((p.technologies as string[] | undefined) ?? []).slice(0, 3).map((t: string) => (
+													<span class="inline-flex items-center rounded-md bg-secondary text-secondary-foreground px-2.5 py-0.5 text-xs font-medium">
+														{t}
+													</span>
+												))}
+												{((p.technologies as string[] | undefined)?.length ?? 0) > 3 && (
+													<span class="inline-flex items-center rounded-md border border-input px-2.5 py-0.5 text-xs font-medium">
+														+{((p.technologies as string[] | undefined)?.length ?? 0) - 3}
+													</span>
+												)}
+											</div>
+										</div>
+									</div>
+
+									<div class="absolute inset-0 backface-hidden rotate-y-180 rounded-lg shadow-lg bg-gradient-to-br from-primary/5 to-accent/5 p-6 flex flex-col overflow-y-auto">
+										<h3 class="text-xl font-semibold mb-3">{p.title}</h3>
+										<div class="flex gap-3 mb-4">
+											<a
+												href={p.live_url ?? "#"}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="flex-1 inline-flex items-center justify-center gap-2 h-9 px-3 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+											>
+												<Icon name="ExternalLink" class="h-4 w-4" />
+												Live Demo
+											</a>
+											<a
+												href={p.github_url ?? "#"}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="flex-1 inline-flex items-center justify-center gap-2 h-9 px-3 text-sm font-medium rounded-md border border-input bg-transparent hover:bg-accent hover:text-accent-foreground transition-colors"
+											>
+												<Icon name="Github" class="h-4 w-4" />
+												Code
+											</a>
+										</div>
+										<div class="text-muted-foreground mb-4 leading-relaxed text-sm prose prose-sm dark:prose-invert max-w-none">
+											{p.content && <PortableText value={p.content} />}
+										</div>
+										<div class="flex flex-wrap gap-2 mt-auto">
+											{((p.technologies as string[] | undefined) ?? []).map((t: string) => (
+												<span class="inline-flex items-center rounded-md bg-secondary text-secondary-foreground px-2.5 py-0.5 text-xs font-medium">
+													{t}
+												</span>
+											))}
+										</div>
+									</div>
+								</div>
+							</div>
+						))
+					}
+				</div>
+
+				<div id="proj-empty" class="text-center py-12" style="display:none">
+					<p class="text-muted-foreground">No projects found in this category.</p>
+				</div>
+			</div>
+		</section>
+	</div>
+</Base>
+
+<script>
+	const ACTIVE = ["bg-primary", "text-primary-foreground"];
+	const INACTIVE = [
+		"border",
+		"border-input",
+		"bg-transparent",
+		"hover:bg-accent",
+		"hover:text-accent-foreground",
+	];
+	const btns = document.querySelectorAll<HTMLButtonElement>(".proj-filter");
+	const items = document.querySelectorAll<HTMLElement>(".project-item");
+	const empty = document.getElementById("proj-empty");
+	btns.forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const filter = btn.dataset.filter;
+			btns.forEach((b) => {
+				b.classList.remove(...ACTIVE);
+				b.classList.add(...INACTIVE);
+			});
+			btn.classList.add(...ACTIVE);
+			btn.classList.remove(...INACTIVE);
+			let visible = 0;
+			items.forEach((item) => {
+				const cats = (item.dataset.categories || "").split("|");
+				const show = filter === "all" || cats.includes(filter || "");
+				item.style.display = show ? "" : "none";
+				if (show) visible++;
+			});
+			if (empty) empty.style.display = visible === 0 ? "" : "none";
+		});
+	});
+</script>

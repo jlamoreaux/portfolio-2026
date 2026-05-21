@@ -1,0 +1,102 @@
+---
+import BlogCard from "../BlogCard.astro";
+import Icon from "../Icon.astro";
+
+interface Props {
+	posts: Array<Record<string, any>>;
+}
+
+const { posts } = Astro.props;
+const allCats = Array.from(
+	new Set(posts.flatMap((p) => (p.categories as string[]) ?? [])),
+).sort();
+const filters = ["All", ...allCats];
+---
+
+<section id="blog" class="py-20">
+	<div class="container mx-auto px-4">
+		<div class="text-center mb-16">
+			<h2 class="text-3xl md:text-4xl font-bold mb-4">Latest Blog Posts</h2>
+			<p class="text-xl text-muted-foreground max-w-2xl mx-auto">
+				Thoughts on software development, technology trends, and lessons learned
+			</p>
+		</div>
+
+		<div class="flex flex-wrap justify-center gap-2 mb-12" id="blog-filters">
+			{
+				filters.map((c, i) => (
+					<button
+						type="button"
+						data-filter={c}
+						class:list={[
+							"blog-filter inline-flex items-center justify-center h-9 px-3 text-sm font-medium rounded-md transition-colors",
+							i === 0
+								? "bg-primary text-primary-foreground"
+								: "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground",
+						]}
+					>
+						{c}
+					</button>
+				))
+			}
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="blog-grid">
+			{
+				posts.map((p) => (
+					<div class="blog-item" data-categories={((p.categories as string[]) ?? []).join("|")}>
+						<BlogCard
+							href={`/blog/${p.id}`}
+							title={p.title}
+							excerpt={p.excerpt}
+							image={p.featured_image}
+							readingTime={p.reading_time}
+							date={p.publishedAt}
+							categories={p.categories}
+							showReadMore={true}
+						/>
+					</div>
+				))
+			}
+		</div>
+
+		<div class="text-center mt-12">
+			<a
+				href="/blog"
+				class="inline-flex items-center justify-center h-11 px-6 text-base font-medium rounded-md border border-input bg-transparent hover:bg-accent hover:text-accent-foreground transition-colors"
+			>
+				View All Posts
+				<Icon name="ArrowRight" class="ml-2 h-5 w-5" />
+			</a>
+		</div>
+	</div>
+</section>
+
+<script>
+	const ACTIVE = ["bg-primary", "text-primary-foreground"];
+	const INACTIVE = [
+		"border",
+		"border-input",
+		"bg-transparent",
+		"hover:bg-accent",
+		"hover:text-accent-foreground",
+	];
+	const btns = document.querySelectorAll<HTMLButtonElement>(".blog-filter");
+	const items = document.querySelectorAll<HTMLElement>("#blog-grid .blog-item");
+	btns.forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const filter = btn.dataset.filter;
+			btns.forEach((b) => {
+				b.classList.remove(...ACTIVE);
+				b.classList.add(...INACTIVE);
+			});
+			btn.classList.add(...ACTIVE);
+			btn.classList.remove(...INACTIVE);
+			items.forEach((item) => {
+				const cats = (item.dataset.categories || "").split("|");
+				item.style.display =
+					filter === "All" || cats.includes(filter || "") ? "" : "none";
+			});
+		});
+	});
+</script>

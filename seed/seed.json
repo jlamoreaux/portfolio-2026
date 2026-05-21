@@ -1,0 +1,464 @@
+{
+	"$schema": "https://emdashcms.com/seed.schema.json",
+	"version": "1",
+	"meta": {
+		"name": "Portfolio 2026",
+		"description": "Personal developer portfolio (blog, projects, uses, contact)",
+		"author": "jlamoreaux"
+	},
+	"settings": {
+		"title": "Your Name",
+		"tagline": "Software Developer & Problem Solver"
+	},
+	"collections": [
+		{
+			"slug": "posts",
+			"label": "Blog Posts",
+			"labelSingular": "Blog Post",
+			"supports": ["drafts", "revisions", "search", "seo"],
+			"fields": [
+				{ "slug": "title", "label": "Title", "type": "string", "required": true, "searchable": true },
+				{ "slug": "excerpt", "label": "Excerpt", "type": "text", "searchable": true },
+				{ "slug": "featured_image", "label": "Featured Image", "type": "image" },
+				{ "slug": "content", "label": "Content", "type": "portableText", "searchable": true },
+				{ "slug": "reading_time", "label": "Reading Time (min)", "type": "integer" },
+				{ "slug": "featured", "label": "Featured", "type": "boolean", "defaultValue": false }
+			]
+		},
+		{
+			"slug": "projects",
+			"label": "Projects",
+			"labelSingular": "Project",
+			"supports": ["drafts", "revisions", "search", "seo"],
+			"fields": [
+				{ "slug": "title", "label": "Title", "type": "string", "required": true, "searchable": true },
+				{ "slug": "description", "label": "Short Description", "type": "text", "searchable": true },
+				{ "slug": "content", "label": "Long Description", "type": "portableText", "searchable": true },
+				{ "slug": "featured_image", "label": "Featured Image", "type": "image" },
+				{ "slug": "technologies", "label": "Technologies", "type": "json" },
+				{ "slug": "live_url", "label": "Live URL", "type": "string" },
+				{ "slug": "github_url", "label": "GitHub URL", "type": "string" },
+				{ "slug": "featured", "label": "Featured", "type": "boolean", "defaultValue": false },
+				{ "slug": "display_order", "label": "Display Order", "type": "integer", "defaultValue": 0 }
+			]
+		},
+		{
+			"slug": "uses",
+			"label": "Uses",
+			"labelSingular": "Uses Item",
+			"supports": ["search"],
+			"fields": [
+				{ "slug": "title", "label": "Name", "type": "string", "required": true, "searchable": true },
+				{ "slug": "description", "label": "Description", "type": "text", "searchable": true },
+				{ "slug": "reasoning", "label": "Why I use it", "type": "text" },
+				{ "slug": "featured_image", "label": "Image", "type": "image" },
+				{ "slug": "use_category", "label": "Category", "type": "string" },
+				{ "slug": "url", "label": "URL", "type": "string" },
+				{ "slug": "price", "label": "Price", "type": "string" },
+				{ "slug": "display_order", "label": "Display Order", "type": "integer", "defaultValue": 0 }
+			]
+		},
+		{
+			"slug": "social_links",
+			"label": "Social Links",
+			"labelSingular": "Social Link",
+			"supports": [],
+			"fields": [
+				{ "slug": "title", "label": "Name", "type": "string", "required": true },
+				{ "slug": "icon", "label": "Icon", "type": "string" },
+				{ "slug": "href", "label": "URL", "type": "string" },
+				{ "slug": "handle", "label": "Handle", "type": "string" },
+				{ "slug": "description", "label": "Description", "type": "string" },
+				{ "slug": "color", "label": "Hover Color Class", "type": "string" },
+				{ "slug": "is_primary", "label": "Show in Footer", "type": "boolean", "defaultValue": true },
+				{ "slug": "display_order", "label": "Display Order", "type": "integer", "defaultValue": 0 }
+			]
+		},
+		{
+			"slug": "site_config",
+			"label": "Site Config",
+			"labelSingular": "Site Config",
+			"supports": [],
+			"fields": [
+				{ "slug": "title", "label": "Name", "type": "string", "required": true },
+				{ "slug": "role_title", "label": "Title / Role", "type": "string" },
+				{ "slug": "email", "label": "Email", "type": "string" },
+				{ "slug": "location", "label": "Location", "type": "string" },
+				{ "slug": "company", "label": "Company", "type": "string" },
+				{ "slug": "role", "label": "Current Role", "type": "string" },
+				{ "slug": "previous_role", "label": "Previous Role", "type": "string" },
+				{ "slug": "avatar", "label": "Avatar", "type": "image" },
+				{ "slug": "hero_title_line1", "label": "Hero Title Line 1", "type": "string" },
+				{ "slug": "hero_title_line2", "label": "Hero Title Line 2", "type": "string" },
+				{ "slug": "hero_description", "label": "Hero Description", "type": "text" },
+				{ "slug": "hero_primary_cta", "label": "Hero Primary CTA", "type": "string" },
+				{ "slug": "hero_primary_cta_href", "label": "Hero Primary CTA Href", "type": "string" },
+				{ "slug": "hero_secondary_cta", "label": "Hero Secondary CTA", "type": "string" },
+				{ "slug": "hero_secondary_cta_href", "label": "Hero Secondary CTA Href", "type": "string" },
+				{ "slug": "technologies", "label": "Technologies", "type": "json" },
+				{ "slug": "availability_status", "label": "Availability Status", "type": "string" },
+				{ "slug": "availability_message", "label": "Availability Message", "type": "string" },
+				{ "slug": "response_time", "label": "Response Time", "type": "string" },
+				{ "slug": "best_topics", "label": "Best Topics", "type": "json" },
+				{ "slug": "contact_cta_title", "label": "Contact CTA Title", "type": "string" },
+				{ "slug": "contact_cta_description", "label": "Contact CTA Description", "type": "text" },
+				{ "slug": "copyright_text", "label": "Copyright Text", "type": "string" },
+				{ "slug": "built_with_text", "label": "Built With Text", "type": "string" }
+			]
+		}
+	],
+	"taxonomies": [
+		{
+			"name": "category",
+			"label": "Categories",
+			"labelSingular": "Category",
+			"hierarchical": false,
+			"collections": ["posts", "projects"],
+			"terms": [
+				{ "slug": "ai-ml", "label": "AI/ML", "description": "Artificial Intelligence and Machine Learning" },
+				{ "slug": "full-stack", "label": "Full-Stack", "description": "Full-stack web development" },
+				{ "slug": "devops", "label": "DevOps", "description": "DevOps and infrastructure" },
+				{ "slug": "career", "label": "Career", "description": "Career and growth" },
+				{ "slug": "tutorial", "label": "Tutorial", "description": "Tutorials and how-tos" }
+			]
+		}
+	],
+	"menus": [
+		{
+			"name": "primary",
+			"label": "Primary Navigation",
+			"items": [
+				{ "type": "custom", "label": "Work", "url": "/projects" },
+				{ "type": "custom", "label": "Blog", "url": "/blog" },
+				{ "type": "custom", "label": "Uses", "url": "/uses" },
+				{ "type": "custom", "label": "Connect", "url": "/#contact" }
+			]
+		}
+	],
+	"content": {
+		"site_config": [
+			{
+				"id": "site-config-main",
+				"slug": "main",
+				"status": "published",
+				"data": {
+					"title": "Your Name",
+					"role_title": "Software Developer",
+					"email": "your.email@example.com",
+					"location": "Your City, State",
+					"company": "Your Company",
+					"role": "Your Current Role",
+					"previous_role": "Your Previous Role",
+					"hero_title_line1": "Software Developer",
+					"hero_title_line2": "& Problem Solver",
+					"hero_description": "Passionate about creating innovative solutions and building exceptional user experiences. Let's build something amazing together.",
+					"hero_primary_cta": "View Projects",
+					"hero_primary_cta_href": "/projects",
+					"hero_secondary_cta": "Read Blog",
+					"hero_secondary_cta_href": "/blog",
+					"technologies": ["React", "Next.js", "TypeScript", "Node.js", "Python", "PostgreSQL"],
+					"availability_status": "available",
+					"availability_message": "Open to new opportunities and interesting projects",
+					"response_time": "I typically respond within 24-48 hours across all platforms",
+					"best_topics": [
+						"Web development projects",
+						"Technical consulting",
+						"Collaboration opportunities",
+						"Open source contributions"
+					],
+					"contact_cta_title": "Ready to Build Something Amazing?",
+					"contact_cta_description": "Whether you have a project in mind, need technical expertise, or want to discuss development opportunities, I'd love to hear from you.",
+					"copyright_text": "Your Name. All rights reserved.",
+					"built_with_text": "Built with Astro, EmDash, and Tailwind CSS"
+				}
+			}
+		],
+		"projects": [
+			{
+				"id": "project-ai-deployment",
+				"slug": "ai-deployment-platform",
+				"status": "published",
+				"data": {
+					"title": "AI Model Deployment Platform",
+					"description": "Streamlined platform for deploying ML models with auto-scaling and monitoring.",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "b1",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s1",
+									"text": "Built a comprehensive platform that simplifies ML model deployment with features like auto-scaling, real-time monitoring, and A/B testing capabilities. Reduced deployment time by 80%."
+								}
+							]
+						}
+					],
+					"technologies": ["React", "Node.js", "Docker", "Kubernetes", "TensorFlow"],
+					"live_url": "https://ai-deploy.example.com",
+					"github_url": "https://github.com/yourusername/ai-deploy",
+					"featured": true,
+					"display_order": 0
+				},
+				"taxonomies": { "category": ["ai-ml"] }
+			},
+			{
+				"id": "project-chat-analytics",
+				"slug": "chat-analytics",
+				"status": "published",
+				"data": {
+					"title": "Real-time Chat Analytics",
+					"description": "Advanced analytics dashboard for customer support conversations.",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "b1",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s1",
+									"text": "Developed a real-time analytics system that processes thousands of support conversations, providing insights on sentiment, resolution time, and customer satisfaction."
+								}
+							]
+						}
+					],
+					"technologies": ["Next.js", "TypeScript", "PostgreSQL", "Redis", "Chart.js"],
+					"live_url": "https://chat-analytics.example.com",
+					"github_url": "https://github.com/yourusername/chat-analytics",
+					"featured": true,
+					"display_order": 1
+				},
+				"taxonomies": { "category": ["full-stack"] }
+			},
+			{
+				"id": "project-computer-vision",
+				"slug": "computer-vision-api",
+				"status": "published",
+				"data": {
+					"title": "Computer Vision API",
+					"description": "RESTful API for image classification and object detection tasks.",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "b1",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s1",
+									"text": "Created a scalable computer vision API that handles image classification, object detection, and facial recognition with 99.2% accuracy. Processes over 10M images daily."
+								}
+							]
+						}
+					],
+					"technologies": ["Python", "FastAPI", "PyTorch", "OpenCV", "AWS"],
+					"live_url": "https://vision-api.example.com",
+					"github_url": "https://github.com/yourusername/vision-api",
+					"featured": false,
+					"display_order": 2
+				},
+				"taxonomies": { "category": ["ai-ml"] }
+			}
+		],
+		"posts": [
+			{
+				"id": "post-support-to-ai",
+				"slug": "support-to-ai-journey",
+				"status": "published",
+				"data": {
+					"title": "From Support Engineering to AI Development: My Journey",
+					"excerpt": "How I transitioned from helping customers solve problems to building AI solutions that solve problems at scale.",
+					"reading_time": 8,
+					"featured": true,
+					"content": [
+						{
+							"_type": "block",
+							"_key": "b1",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s1",
+									"text": "How I transitioned from helping customers solve problems to building AI solutions that solve problems at scale."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": { "category": ["ai-ml", "career"] }
+			},
+			{
+				"id": "post-ml-pipelines",
+				"slug": "scalable-ml-pipelines",
+				"status": "published",
+				"data": {
+					"title": "Building Scalable ML Pipelines with Next.js and Python",
+					"excerpt": "A deep dive into creating robust machine learning pipelines that can handle production workloads.",
+					"reading_time": 12,
+					"featured": true,
+					"content": [
+						{
+							"_type": "block",
+							"_key": "b1",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s1",
+									"text": "A deep dive into creating robust machine learning pipelines that can handle production workloads."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": { "category": ["ai-ml", "full-stack"] }
+			},
+			{
+				"id": "post-ai-future-web",
+				"slug": "ai-future-web-dev",
+				"status": "published",
+				"data": {
+					"title": "The Future of AI in Web Development",
+					"excerpt": "Exploring how artificial intelligence is reshaping the way we build and interact with web applications.",
+					"reading_time": 6,
+					"featured": false,
+					"content": [
+						{
+							"_type": "block",
+							"_key": "b1",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s1",
+									"text": "Exploring how artificial intelligence is reshaping the way we build and interact with web applications."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": { "category": ["ai-ml"] }
+			}
+		],
+		"uses": [
+			{
+				"id": "uses-macbook",
+				"slug": "macbook-pro-16-m3-max",
+				"status": "published",
+				"data": {
+					"title": "MacBook Pro 16\" M3 Max",
+					"description": "Primary development machine with 64GB RAM and 2TB SSD",
+					"reasoning": "The M3 Max handles ML model training and multiple development environments effortlessly. The 16\" screen provides excellent real estate for coding.",
+					"use_category": "Hardware",
+					"url": "https://apple.com/macbook-pro",
+					"price": "$4,299",
+					"display_order": 0
+				}
+			},
+			{
+				"id": "uses-vscode",
+				"slug": "vs-code",
+				"status": "published",
+				"data": {
+					"title": "VS Code",
+					"description": "Primary code editor with extensive AI and ML extensions",
+					"reasoning": "Excellent Python and TypeScript support, integrated terminal, and amazing extension ecosystem for AI development.",
+					"use_category": "Software",
+					"url": "https://code.visualstudio.com",
+					"display_order": 1
+				}
+			},
+			{
+				"id": "uses-docker",
+				"slug": "docker-desktop",
+				"status": "published",
+				"data": {
+					"title": "Docker Desktop",
+					"description": "Containerization platform for consistent development environments",
+					"reasoning": "Essential for ML model deployment and ensuring consistency across development, staging, and production environments.",
+					"use_category": "Development Tools",
+					"url": "https://docker.com",
+					"display_order": 2
+				}
+			},
+			{
+				"id": "uses-aeron",
+				"slug": "herman-miller-aeron-chair",
+				"status": "published",
+				"data": {
+					"title": "Herman Miller Aeron Chair",
+					"description": "Ergonomic office chair with full adjustability",
+					"reasoning": "Investing in ergonomics is crucial for long coding sessions. This chair has saved my back during intense development sprints.",
+					"use_category": "Office Setup",
+					"url": "https://hermanmiller.com",
+					"price": "$1,395",
+					"display_order": 3
+				}
+			}
+		],
+		"social_links": [
+			{
+				"id": "social-email",
+				"slug": "email",
+				"status": "published",
+				"data": {
+					"title": "Email",
+					"icon": "Mail",
+					"href": "mailto:your.email@example.com",
+					"handle": "your.email@example.com",
+					"description": "Drop me a line",
+					"color": "hover:text-red-500",
+					"is_primary": true,
+					"display_order": 0
+				}
+			},
+			{
+				"id": "social-x",
+				"slug": "x-twitter",
+				"status": "published",
+				"data": {
+					"title": "X (Twitter)",
+					"icon": "Twitter",
+					"href": "https://x.com/yourusername",
+					"handle": "@yourusername",
+					"description": "Follow my journey",
+					"color": "hover:text-blue-500",
+					"is_primary": true,
+					"display_order": 1
+				}
+			},
+			{
+				"id": "social-github",
+				"slug": "github",
+				"status": "published",
+				"data": {
+					"title": "GitHub",
+					"icon": "Github",
+					"href": "https://github.com/yourusername",
+					"handle": "@yourusername",
+					"description": "Check out my code",
+					"color": "hover:text-gray-900 dark:hover:text-gray-100",
+					"is_primary": true,
+					"display_order": 2
+				}
+			},
+			{
+				"id": "social-linkedin",
+				"slug": "linkedin",
+				"status": "published",
+				"data": {
+					"title": "LinkedIn",
+					"icon": "Linkedin",
+					"href": "https://linkedin.com/in/yourprofile",
+					"handle": "yourprofile",
+					"description": "Let's connect professionally",
+					"color": "hover:text-blue-600",
+					"is_primary": true,
+					"display_order": 3
+				}
+			}
+		]
+	}
+}

@@ -1,0 +1,40 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "../components/sections/Hero.astro";
+import ProjectPreview from "../components/sections/ProjectPreview.astro";
+import BlogSection from "../components/sections/BlogSection.astro";
+import UsesSection from "../components/sections/UsesSection.astro";
+import ContactSection from "../components/sections/ContactSection.astro";
+import {
+	getBlogPosts,
+	getProjects,
+	getSiteConfig,
+	getSocialLinks,
+	getUses,
+} from "../lib/site";
+
+const [config, social, projData, postData, useData] = await Promise.all([
+	getSiteConfig(),
+	getSocialLinks(),
+	getProjects(),
+	getBlogPosts(),
+	getUses(),
+]);
+
+if (projData.cacheHint && Astro.cache?.enabled) {
+	Astro.cache.set(projData.cacheHint);
+}
+
+const linkedin = social.find((s) =>
+	(s.title ?? "").toLowerCase().includes("linkedin"),
+)?.href;
+const featured = projData.projects.slice(0, 3);
+---
+
+<Base>
+	<Hero config={config} />
+	<ProjectPreview projects={featured} />
+	<BlogSection posts={postData.posts} />
+	<UsesSection items={useData.items} />
+	<ContactSection config={config} linkedinHref={linkedin} />
+</Base>
