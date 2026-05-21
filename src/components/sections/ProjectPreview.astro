@@ -1,0 +1,47 @@
+---
+import ProjectCard from "../ProjectCard.astro";
+import Icon from "../Icon.astro";
+
+interface Props {
+	projects: Array<Record<string, any>>;
+}
+
+const { projects } = Astro.props;
+---
+
+<section class="py-20 bg-muted/30">
+	<div class="container mx-auto px-4">
+		<div class="text-center mb-16">
+			<h2 class="text-3xl md:text-4xl font-bold mb-4">Featured Projects</h2>
+			<p class="text-xl text-muted-foreground max-w-2xl mx-auto">
+				A selection of recent projects showcasing my journey from full-stack
+				development to AI engineering
+			</p>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+			{
+				projects.map((p) => (
+					<ProjectCard
+						title={p.title}
+						description={p.description}
+						image={p.featured_image}
+						technologies={p.technologies}
+						liveUrl={p.live_url}
+						githubUrl={p.github_url}
+					/>
+				))
+			}
+		</div>
+
+		<div class="text-center">
+			<a
+				href="/projects"
+				class="inline-flex items-center justify-center bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 text-base rounded-md font-medium transition-colors"
+			>
+				View All Projects
+				<Icon name="ArrowRight" class="ml-2 h-5 w-5" />
+			</a>
+		</div>
+	</div>
+</section>

@@ -1,0 +1,65 @@
+---
+import Icon from "./Icon.astro";
+import { getSiteConfig, getSocialLinks } from "../lib/site";
+
+const [config, socialLinks] = await Promise.all([
+	getSiteConfig(),
+	getSocialLinks(),
+]);
+const social = socialLinks.filter((s) => s.is_primary !== false && s.href);
+const builtWith = (config?.built_with_text ?? "Built with Astro, EmDash, and Tailwind CSS")
+	.replace("❤️", "")
+	.trim();
+const copyright = config?.copyright_text ?? "All rights reserved.";
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-muted/50 border-t border-border/50">
+	<div class="container mx-auto px-4 py-12">
+		<div class="flex flex-col items-center space-y-8">
+			<div class="flex items-center space-x-6">
+				{
+					social.map((link) => (
+						<a
+							href={link.href}
+							target="_blank"
+							rel="noopener noreferrer"
+							class={`p-3 rounded-full bg-background hover:bg-muted transition-all duration-300 ${link.color ?? ""}`}
+							aria-label={link.title}
+						>
+							<Icon name={link.icon ?? "Globe"} class="h-5 w-5" />
+						</a>
+					))
+				}
+			</div>
+
+			<button
+				id="back-to-top"
+				type="button"
+				class="text-sm text-muted-foreground hover:text-foreground px-4 py-2 rounded-md hover:bg-muted transition-colors"
+			>
+				Back to Top &uarr;
+			</button>
+
+			<div class="text-center space-y-2">
+				<p
+					class="text-sm text-muted-foreground flex items-center justify-center gap-2"
+				>
+					{builtWith}
+					<Icon name="Heart" class="h-4 w-4 text-red-500" />
+				</p>
+				<p class="text-xs text-muted-foreground">
+					&copy; {year} {copyright}
+				</p>
+			</div>
+		</div>
+	</div>
+</footer>
+
+<script>
+	document
+		.getElementById("back-to-top")
+		?.addEventListener("click", () =>
+			window.scrollTo({ top: 0, behavior: "smooth" }),
+		);
+</script>

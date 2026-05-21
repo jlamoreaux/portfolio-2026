@@ -1,0 +1,293 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+
+@plugin "@tailwindcss/typography";
+
+/* Dark mode is toggled via a `.dark` class on <html> (next-themes parity). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Design tokens, ported 1:1 from the original Next.js site.
+ * The numeric "channel" variables in :root / .dark feed the Tailwind theme
+ * tokens below (via hsl(var(--x))) so utilities like bg-background and
+ * text-muted-foreground resolve to identical colors. primary/accent are fixed
+ * orange/amber hexes, matching the old tailwind.config.js.
+ */
+@theme inline {
+	--color-border: hsl(var(--border));
+	--color-input: hsl(var(--input));
+	--color-ring: hsl(var(--ring));
+	--color-background: hsl(var(--background));
+	--color-foreground: hsl(var(--foreground));
+
+	--color-primary: #ea580c;
+	--color-primary-foreground: hsl(var(--primary-foreground));
+	--color-primary-50: #fff7ed;
+	--color-primary-100: #ffedd5;
+	--color-primary-500: #f97316;
+	--color-primary-600: #ea580c;
+	--color-primary-700: #c2410c;
+
+	--color-secondary: hsl(var(--secondary));
+	--color-secondary-foreground: hsl(var(--secondary-foreground));
+
+	--color-accent: #d97706;
+	--color-accent-foreground: #ffffff;
+	--color-accent-50: #fffbeb;
+	--color-accent-100: #fef3c7;
+	--color-accent-500: #f59e0b;
+	--color-accent-600: #d97706;
+
+	--color-destructive: hsl(var(--destructive));
+	--color-destructive-foreground: hsl(var(--destructive-foreground));
+
+	--color-muted: hsl(var(--muted));
+	--color-muted-foreground: hsl(var(--muted-foreground));
+
+	--color-popover: hsl(var(--popover));
+	--color-popover-foreground: hsl(var(--popover-foreground));
+
+	--color-card: hsl(var(--card));
+	--color-card-foreground: hsl(var(--card-foreground));
+
+	--font-sans: "Inter Variable", system-ui, sans-serif;
+	--font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+
+	--radius-lg: var(--radius);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-sm: calc(var(--radius) - 4px);
+
+	--animate-fade-in: fade-in 0.6s ease-out;
+	--animate-slide-in: slide-in 0.3s ease-out;
+	--animate-float: float 3s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+	0% {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes slide-in {
+	0% {
+		transform: translateX(-100%);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
+
+@keyframes float {
+	0%,
+	100% {
+		transform: translateY(0px);
+	}
+	50% {
+		transform: translateY(-10px);
+	}
+}
+
+@layer base {
+	:root {
+		--font-inter: "Inter Variable", system-ui, sans-serif;
+		--font-jetbrains-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+
+		--background: 0 0% 100%;
+		--foreground: 222.2 84% 4.9%;
+		--card: 0 0% 100%;
+		--card-foreground: 222.2 84% 4.9%;
+		--popover: 0 0% 100%;
+		--popover-foreground: 222.2 84% 4.9%;
+		--primary: 21 90% 48%;
+		--primary-foreground: 210 40% 98%;
+		--secondary: 210 40% 96%;
+		--secondary-foreground: 222.2 84% 4.9%;
+		--muted: 210 40% 96%;
+		--muted-foreground: 215.4 16.3% 46.9%;
+		--accent: 38 92% 50%;
+		--accent-foreground: 210 40% 98%;
+		--destructive: 0 84.2% 60.2%;
+		--destructive-foreground: 210 40% 98%;
+		--border: 214.3 31.8% 91.4%;
+		--input: 214.3 31.8% 91.4%;
+		--ring: 21 90% 48%;
+		--radius: 0.75rem;
+	}
+
+	.dark {
+		--background: 222.2 84% 4.9%;
+		--foreground: 210 40% 98%;
+		--card: 222.2 84% 4.9%;
+		--card-foreground: 210 40% 98%;
+		--popover: 222.2 84% 4.9%;
+		--popover-foreground: 210 40% 98%;
+		--primary: 21 90% 48%;
+		--primary-foreground: 222.2 84% 4.9%;
+		--secondary: 217.2 32.6% 17.5%;
+		--secondary-foreground: 210 40% 98%;
+		--muted: 217.2 32.6% 17.5%;
+		--muted-foreground: 215 20.2% 65.1%;
+		--accent: 38 92% 50%;
+		--accent-foreground: 210 40% 98%;
+		--destructive: 0 62.8% 30.6%;
+		--destructive-foreground: 210 40% 98%;
+		--border: 217.2 32.6% 17.5%;
+		--input: 217.2 32.6% 17.5%;
+		--ring: 21 90% 48%;
+	}
+
+	* {
+		border-color: hsl(var(--border));
+	}
+
+	html {
+		scroll-behavior: smooth;
+	}
+
+	body {
+		background-color: hsl(var(--background));
+		color: hsl(var(--foreground));
+		font-family: var(--font-sans);
+		font-feature-settings: "rlig" 1, "calt" 1;
+		-webkit-font-smoothing: antialiased;
+		min-height: 100vh;
+	}
+}
+
+@layer utilities {
+	.text-balance {
+		text-wrap: balance;
+	}
+
+	.text-gradient {
+		background-image: linear-gradient(to right, #ea580c, #f59e0b);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	.glass-effect {
+		background-color: rgb(255 255 255 / 0.1);
+		backdrop-filter: blur(12px);
+		border: 1px solid rgb(255 255 255 / 0.2);
+	}
+
+	.line-clamp-2 {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.line-clamp-3 {
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.perspective-1000 {
+		perspective: 1000px;
+	}
+
+	.preserve-3d {
+		transform-style: preserve-3d;
+	}
+
+	.backface-hidden {
+		backface-visibility: hidden;
+	}
+
+	.rotate-y-180 {
+		transform: rotateY(180deg);
+	}
+}
+
+/* Scroll progress bar */
+.progress-bar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: linear-gradient(90deg, #ea580c, #f59e0b);
+	transform: scaleX(0);
+	transform-origin: 0%;
+	z-index: 1000;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+	width: 6px;
+}
+::-webkit-scrollbar-track {
+	background-color: hsl(var(--muted));
+}
+::-webkit-scrollbar-thumb {
+	background-color: hsl(var(--primary) / 0.5);
+	border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+	background-color: hsl(var(--primary) / 0.7);
+}
+
+/* Konami terminal + matrix rain */
+.terminal {
+	font-family: var(--font-jetbrains-mono), monospace;
+	background: #1a1a1a;
+	color: #00ff00;
+	padding: 1rem;
+	border-radius: 8px;
+	box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+.terminal-cursor {
+	animation: blink 1s infinite;
+}
+@keyframes blink {
+	0%,
+	50% {
+		opacity: 1;
+	}
+	51%,
+	100% {
+		opacity: 0;
+	}
+}
+.matrix-rain {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	z-index: 1;
+}
+.matrix-column {
+	position: absolute;
+	top: -100%;
+	width: 20px;
+	height: 100vh;
+	animation: matrix-fall 3s linear infinite;
+}
+.matrix-char {
+	display: block;
+	font-size: 14px;
+	line-height: 1.2;
+	color: #00ff00;
+	text-shadow: 0 0 5px #00ff00;
+	opacity: 0.8;
+}
+@keyframes matrix-fall {
+	0% {
+		transform: translateY(-100vh);
+	}
+	100% {
+		transform: translateY(100vh);
+	}
+}

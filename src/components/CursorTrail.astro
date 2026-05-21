@@ -1,0 +1,36 @@
+<div class="fixed inset-0 pointer-events-none z-50" id="cursor-trail" aria-hidden="true"></div>
+
+<script>
+	const root = document.getElementById("cursor-trail");
+	const finePointer =
+		typeof window.matchMedia === "function" &&
+		window.matchMedia("(pointer: fine)").matches;
+
+	if (root && finePointer) {
+		let last = 0;
+		window.addEventListener(
+			"mousemove",
+			(e) => {
+				const now = performance.now();
+				if (now - last < 16) return; // throttle to ~60fps
+				last = now;
+
+				const dot = document.createElement("div");
+				dot.className = "absolute w-2 h-2 rounded-full";
+				dot.style.background = "hsl(var(--primary) / 0.3)";
+				dot.style.left = `${e.clientX - 4}px`;
+				dot.style.top = `${e.clientY - 4}px`;
+				dot.style.transition =
+					"transform 0.6s ease-out, opacity 0.6s ease-out";
+				root.appendChild(dot);
+
+				requestAnimationFrame(() => {
+					dot.style.transform = "scale(0)";
+					dot.style.opacity = "0";
+				});
+				setTimeout(() => dot.remove(), 650);
+			},
+			{ passive: true },
+		);
+	}
+</script>

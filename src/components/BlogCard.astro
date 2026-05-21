@@ -1,0 +1,90 @@
+---
+import Icon from "./Icon.astro";
+import { formatDate } from "../lib/site";
+
+interface Props {
+	href: string;
+	title: string;
+	excerpt?: string;
+	image?: { src?: string; alt?: string } | null;
+	readingTime?: number;
+	date?: Date | string | null;
+	categories?: string[];
+	showReadMore?: boolean;
+}
+
+const {
+	href,
+	title,
+	excerpt,
+	image,
+	readingTime,
+	date,
+	categories = [],
+	showReadMore = false,
+} = Astro.props;
+---
+
+<div
+	class="h-full group rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col overflow-hidden"
+>
+	<div class="relative h-48 overflow-hidden">
+		<img
+			src={image?.src ?? "/placeholder.svg"}
+			alt={image?.alt ?? title}
+			class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+			loading="lazy"
+		/>
+	</div>
+	<div class="p-6 pb-3">
+		<div class="flex items-center gap-4 text-sm text-muted-foreground mb-2">
+			<div class="flex items-center gap-1">
+				<Icon name="Calendar" class="h-4 w-4" />
+				{formatDate(date)}
+			</div>
+			{
+				readingTime ? (
+					<div class="flex items-center gap-1">
+						<Icon name="Clock" class="h-4 w-4" />
+						{readingTime} min read
+					</div>
+				) : null
+			}
+		</div>
+		<a href={href}>
+			<h3
+				class="text-xl font-semibold group-hover:text-primary transition-colors line-clamp-2"
+			>
+				{title}
+			</h3>
+		</a>
+	</div>
+	<div class="px-6 pb-6 pt-0 flex-1 flex flex-col">
+		<p class="text-muted-foreground mb-4 line-clamp-3 leading-relaxed">
+			{excerpt}
+		</p>
+		<div class="flex flex-wrap gap-2">
+			{
+				categories.map((c) => (
+					<span class="inline-flex items-center rounded-md bg-secondary text-secondary-foreground px-2.5 py-0.5 text-xs font-medium">
+						{c}
+					</span>
+				))
+			}
+		</div>
+		{
+			showReadMore && (
+				<a
+					href={href}
+					class="group/btn inline-flex items-center mt-4 font-medium text-sm hover:text-primary transition-colors"
+				>
+					Read More
+					<Icon
+						name="ArrowRight"
+						class="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform"
+					/>
+				</a>
+			)
+		}
+	</div>
+</div>

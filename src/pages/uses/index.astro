@@ -1,0 +1,17 @@
+---
+import Base from "../../layouts/Base.astro";
+import UsesSection from "../../components/sections/UsesSection.astro";
+import { getUses } from "../../lib/site";
+
+const { items, cacheHint } = await getUses();
+if (cacheHint && Astro.cache?.enabled) Astro.cache.set(cacheHint);
+---
+
+<Base
+	title="What I Use"
+	description="Tools, hardware, and software that power my development workflow"
+>
+	<div class="pt-20">
+		<UsesSection items={items} standalone={true} />
+	</div>
+</Base>

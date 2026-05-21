@@ -1,0 +1,94 @@
+---
+import Base from "../../layouts/Base.astro";
+import Icon from "../../components/Icon.astro";
+import { PortableText } from "emdash/ui";
+import { decodeSlug, getEmDashEntry, getEntryTerms } from "emdash";
+import { formatDate } from "../../lib/site";
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) return Astro.redirect("/404");
+
+const { entry: post, cacheHint } = await getEmDashEntry("posts", slug);
+if (!post) return Astro.redirect("/404");
+if (cacheHint && Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const cats = await getEntryTerms("posts", post.data.id, "category");
+const img = post.data.featured_image as { src?: string; alt?: string } | undefined;
+---
+
+<Base
+	title={post.data.title}
+	description={post.data.excerpt}
+	image={img?.src}
+	type="article"
+>
+	<article class="py-20">
+		<div class="container mx-auto px-4 max-w-4xl">
+			<a
+				href="/#blog"
+				class="group inline-flex items-center mb-8 -ml-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+			>
+				<Icon
+					name="ArrowLeft"
+					class="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform"
+				/>
+				Back to Blog
+			</a>
+
+			<header class="mb-12">
+				<div class="flex flex-wrap gap-2 mb-4">
+					{
+						cats.map((c) => (
+							<span class="inline-flex items-center rounded-md bg-secondary text-secondary-foreground px-2.5 py-0.5 text-xs font-medium">
+								{c.label}
+							</span>
+						))
+					}
+				</div>
+
+				<h1 class="text-4xl md:text-5xl font-bold mb-6" {...post.edit.title}>
+					{post.data.title}
+				</h1>
+
+				<div class="flex items-center gap-6 text-muted-foreground">
+					<div class="flex items-center gap-2">
+						<Icon name="Calendar" class="h-5 w-5" />
+						{formatDate(post.data.publishedAt)}
+					</div>
+					{
+						post.data.reading_time ? (
+							<div class="flex items-center gap-2">
+								<Icon name="Clock" class="h-5 w-5" />
+								{post.data.reading_time} min read
+							</div>
+						) : null
+					}
+				</div>
+			</header>
+
+			{
+				img?.src && (
+					<div class="relative w-full aspect-[2/1] mb-12 rounded-lg overflow-hidden">
+						<img
+							src={img.src}
+							alt={img.alt ?? post.data.title}
+							class="object-cover w-full h-full"
+						/>
+					</div>
+				)
+			}
+
+			<div
+				class="prose prose-lg dark:prose-invert prose-headings:font-bold prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:mb-4 prose-p:leading-relaxed max-w-none"
+			>
+				{
+					post.data.content ? (
+						<PortableText value={post.data.content} />
+					) : (
+						<p class="text-muted-foreground italic">Full content coming soon...</p>
+					)
+				}
+			</div>
+		</div>
+	</article>
+</Base>

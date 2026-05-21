@@ -10,6 +10,14 @@ build/
 dist/
 .open-next/
 
+# Astro / Cloudflare / EmDash
+.astro/
+.wrangler/
+.emdash/
+*.db
+*.db-*
+/uploads/
+
 # Environment files
 .env
 .env.local

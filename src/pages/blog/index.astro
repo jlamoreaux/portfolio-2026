@@ -1,0 +1,58 @@
+---
+import Base from "../../layouts/Base.astro";
+import BlogCard from "../../components/BlogCard.astro";
+import Icon from "../../components/Icon.astro";
+import { getBlogPosts } from "../../lib/site";
+
+const { posts, cacheHint } = await getBlogPosts();
+if (cacheHint && Astro.cache?.enabled) Astro.cache.set(cacheHint);
+---
+
+<Base
+	title="Blog"
+	description="Thoughts, tutorials, and insights on software development"
+>
+	<section class="py-20">
+		<div class="container mx-auto px-4">
+			<a
+				href="/#blog"
+				class="group inline-flex items-center mb-8 -ml-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+			>
+				<Icon
+					name="ArrowLeft"
+					class="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform"
+				/>
+				Back to Home
+			</a>
+
+			<div class="text-center mb-16">
+				<h1 class="text-4xl md:text-5xl font-bold mb-4">Blog</h1>
+				<p class="text-xl text-muted-foreground max-w-2xl mx-auto">
+					Thoughts, tutorials, and insights on software development
+				</p>
+			</div>
+
+			{
+				posts.length > 0 ? (
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+						{posts.map((p) => (
+							<BlogCard
+								href={`/blog/${p.id}`}
+								title={p.title}
+								excerpt={p.excerpt}
+								image={p.featured_image}
+								readingTime={p.reading_time}
+								date={p.publishedAt}
+								categories={p.categories}
+							/>
+						))}
+					</div>
+				) : (
+					<div class="text-center py-12 text-muted-foreground">
+						<p>No posts yet.</p>
+					</div>
+				)
+			}
+		</div>
+	</section>
+</Base>

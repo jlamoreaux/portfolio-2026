@@ -1,0 +1,216 @@
+<div
+	id="konami-overlay"
+	class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center p-4 hidden"
+>
+	<div
+		id="konami-window"
+		class="w-full max-w-4xl h-[600px] rounded-lg overflow-hidden bg-gray-900 border-gray-700 border-2 shadow-2xl flex flex-col"
+	>
+		<div
+			id="konami-titlebar"
+			class="flex items-center justify-between p-3 bg-gray-800 border-b border-gray-700"
+		>
+			<div class="flex items-center gap-2">
+				<div class="w-3 h-3 bg-red-500 rounded-full"></div>
+				<div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+				<div class="w-3 h-3 bg-green-500 rounded-full"></div>
+				<span class="ml-4 text-sm font-mono text-gray-300">dev@portfolio:~$</span>
+			</div>
+			<button
+				id="konami-close"
+				type="button"
+				class="text-gray-400 hover:text-white p-1"
+				aria-label="Close terminal">✕</button
+			>
+		</div>
+
+		<div
+			id="konami-body"
+			class="relative p-4 flex-1 overflow-y-auto font-mono text-sm text-green-400 bg-gray-900"
+		>
+			<div id="konami-lines" class="space-y-1"></div>
+			<form id="konami-form" class="flex items-center mt-2">
+				<span id="konami-prompt" class="text-white">$ </span>
+				<input
+					id="konami-input"
+					type="text"
+					autocomplete="off"
+					spellcheck="false"
+					class="flex-1 bg-transparent outline-none ml-2 text-white"
+					placeholder="Type a command..."
+				/>
+				<span class="animate-pulse text-white">|</span>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script>
+	const KONAMI = [
+		"ArrowUp",
+		"ArrowUp",
+		"ArrowDown",
+		"ArrowDown",
+		"ArrowLeft",
+		"ArrowRight",
+		"ArrowLeft",
+		"ArrowRight",
+		"KeyB",
+		"KeyA",
+	];
+
+	const commands: Record<string, string | ((args: string) => string)> = {
+		help: "Available commands: help, about, skills, projects, clear, matrix, joke, coffee",
+		about: "Your Name - Software Developer creating innovative solutions",
+		skills:
+			"JavaScript, TypeScript, React, Next.js, Node.js, Python, PostgreSQL, Docker",
+		projects:
+			"Full-stack web applications, API development, responsive UIs, and more!",
+		clear: "CLEAR_TERMINAL",
+		matrix: "MATRIX_MODE",
+		joke: "Why do programmers prefer dark mode? Because light attracts bugs!",
+		coffee: "Brewing coffee... Please wait... Coffee ready! Time to code!",
+		ls: "portfolio.js  blog.md  projects/  skills.json  coffee.exe",
+		pwd: "/home/developer/portfolio",
+		whoami: "developer - Software Engineer",
+		date: new Date().toLocaleString(),
+		echo: (args: string) => args || "",
+	};
+
+	const overlay = document.getElementById("konami-overlay");
+	const win = document.getElementById("konami-window");
+	const body = document.getElementById("konami-body");
+	const lines = document.getElementById("konami-lines");
+	const form = document.getElementById("konami-form") as HTMLFormElement | null;
+	const input = document.getElementById("konami-input") as HTMLInputElement | null;
+	const closeBtn = document.getElementById("konami-close");
+
+	let seq: string[] = [];
+	let isOpen = false;
+	let matrixTimer: ReturnType<typeof setTimeout> | undefined;
+
+	function addLine(text: string, type: "input" | "output" | "error") {
+		if (!lines) return;
+		const div = document.createElement("div");
+		div.textContent = text;
+		div.className =
+			type === "input"
+				? "text-white"
+				: type === "error"
+					? "text-red-400"
+					: "text-green-400";
+		lines.appendChild(div);
+		if (body) body.scrollTop = body.scrollHeight;
+	}
+
+	function reset() {
+		if (lines) lines.innerHTML = "";
+		addLine("Welcome to the secret terminal!", "output");
+		addLine('Type "help" for available commands', "output");
+	}
+
+	function open() {
+		if (!overlay) return;
+		isOpen = true;
+		overlay.classList.remove("hidden");
+		overlay.classList.add("flex");
+		input?.focus();
+	}
+
+	function close() {
+		if (!overlay) return;
+		isOpen = false;
+		overlay.classList.add("hidden");
+		overlay.classList.remove("flex");
+	}
+
+	function setMatrix(on: boolean) {
+		if (!win || !body) return;
+		if (on) {
+			win.classList.remove("bg-gray-900", "border-gray-700");
+			win.classList.add("bg-black", "border-green-500");
+			body.classList.remove("bg-gray-900");
+			body.classList.add("bg-black");
+			const rain = document.createElement("div");
+			rain.id = "konami-rain";
+			rain.className = "absolute inset-0 pointer-events-none";
+			const inner = document.createElement("div");
+			inner.className = "matrix-rain";
+			for (let i = 0; i < 20; i++) {
+				const col = document.createElement("div");
+				col.className = "matrix-column";
+				col.style.left = `${i * 5}%`;
+				col.style.animationDelay = `${Math.random() * 2}s`;
+				for (let j = 0; j < 20; j++) {
+					const ch = document.createElement("span");
+					ch.className = "matrix-char";
+					ch.textContent = String.fromCharCode(0x30a0 + Math.random() * 96);
+					col.appendChild(ch);
+				}
+				inner.appendChild(col);
+			}
+			rain.appendChild(inner);
+			body.appendChild(rain);
+			matrixTimer = setTimeout(() => setMatrix(false), 3000);
+		} else {
+			if (matrixTimer) clearTimeout(matrixTimer);
+			win.classList.add("bg-gray-900", "border-gray-700");
+			win.classList.remove("bg-black", "border-green-500");
+			body.classList.add("bg-gray-900");
+			body.classList.remove("bg-black");
+			document.getElementById("konami-rain")?.remove();
+		}
+	}
+
+	function run(raw: string) {
+		const parts = raw.trim().toLowerCase().split(" ");
+		const cmd = parts[0];
+		const args = parts.slice(1).join(" ");
+		addLine(`$ ${raw}`, "input");
+		if (cmd === "") return;
+
+		const handler = commands[cmd];
+		if (handler === undefined) {
+			addLine(`Command not found: ${cmd}`, "error");
+			return;
+		}
+		const result = typeof handler === "function" ? handler(args) : handler;
+		if (result === "CLEAR_TERMINAL") {
+			if (lines) lines.innerHTML = "";
+			return;
+		}
+		if (result === "MATRIX_MODE") {
+			addLine("Entering the Matrix...", "output");
+			setMatrix(true);
+			return;
+		}
+		addLine(result, "output");
+	}
+
+	reset();
+
+	document.addEventListener("keydown", (e) => {
+		if (isOpen) return;
+		seq = [...seq, e.code].slice(-KONAMI.length);
+		if (seq.length === KONAMI.length && seq.every((k, i) => k === KONAMI[i])) {
+			seq = [];
+			open();
+		}
+	});
+
+	form?.addEventListener("submit", (e) => {
+		e.preventDefault();
+		if (input && input.value.trim()) {
+			run(input.value);
+			input.value = "";
+		}
+	});
+
+	closeBtn?.addEventListener("click", close);
+	overlay?.addEventListener("click", (e) => {
+		if (e.target === overlay) close();
+	});
+	document.addEventListener("keydown", (e) => {
+		if (isOpen && e.key === "Escape") close();
+	});
+</script>
