@@ -65,9 +65,12 @@ ${blogList}
 ## Discovery
 
 - [Sitemap](${siteUrl}/sitemap.xml): All indexable URLs
+- [Capability catalog](${siteUrl}/.well-known/ai-catalog.json): ARD manifest of every resource on this domain
+- [OpenAPI](${siteUrl}/openapi.json): Machine-readable description of the public API
 - [API catalog](${siteUrl}/.well-known/api-catalog): RFC 9727 service catalog
 - [MCP server card](${siteUrl}/.well-known/mcp/server-card.json): Model Context Protocol server card
 - [Agent skills index](${siteUrl}/.well-known/agent-skills/index.json): Available agent skills
+- [auth.md](${siteUrl}/auth.md): Agent authentication policy. No registration or credentials are required.
 `
 
     return new NextResponse(body, {
