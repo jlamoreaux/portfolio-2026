@@ -206,8 +206,12 @@ export function GET() {
     security: [],
   }
 
-  return NextResponse.json(doc, {
+  // Not NextResponse.json: that forces Content-Type: application/json, which
+  // would contradict the application/openapi+json this document is advertised
+  // as in the ARD catalog and the Link header.
+  return new NextResponse(JSON.stringify(doc), {
     headers: {
+      "Content-Type": "application/openapi+json; charset=utf-8",
       "Access-Control-Allow-Origin": "*",
       "Cache-Control": "public, max-age=3600",
     },

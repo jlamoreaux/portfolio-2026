@@ -122,6 +122,10 @@ ARD catalog; it links to everything else.
 | ARD capability catalog | \`${siteUrl}/.well-known/ai-catalog.json\` | \`application/json\` |
 | OpenAPI description | \`${siteUrl}/openapi.json\` | \`application/openapi+json\` |
 | MCP server card | \`${siteUrl}/.well-known/mcp/server-card.json\` | \`application/json\` |
+
+The MCP card describes in-page WebMCP tools, not a remote MCP endpoint. Every
+capability it names is also reachable as an ordinary HTTPS request, so no MCP
+client is required.
 | Agent skills index | \`${siteUrl}/.well-known/agent-skills/index.json\` | \`application/json\` |
 | RFC 9727 API catalog | \`${siteUrl}/.well-known/api-catalog\` | \`application/linkset+json\` |
 | Agent auth policy | \`${siteUrl}/auth.md\` | \`text/markdown\` |

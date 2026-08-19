@@ -53,7 +53,7 @@ export function GET() {
         identifier: urn("server", "mcp"),
         displayName: "MCP Server Card",
         description:
-          "Model Context Protocol server card describing the resources this site exposes to MCP clients.",
+          "Model Context Protocol server card. Tools are offered in-page via WebMCP; there is no remote MCP endpoint, and the listed resources are plain HTTPS GETs.",
         type: "application/mcp-server-card+json",
         url: `${siteUrl}/.well-known/mcp/server-card.json`,
         representativeQueries: [

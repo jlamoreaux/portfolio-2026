@@ -52,10 +52,14 @@ That is the honest answer to "how do I authenticate and pay here?".
 If protected APIs or paid endpoints are added later, publish the matching
 metadata at that point and update `/auth.md` and the ARD catalog together.
 
-## Known gap
+## MCP: in-page only
 
-`/.well-known/mcp/server-card.json` advertises `transport.endpoint`
-`https://jlmx.dev/api/mcp`, but no such route exists — MCP tools are currently
-exposed in-page through WebMCP (`components/webmcp-provider.tsx`). Either
-implement a streamable HTTP MCP endpoint or correct the card. The DNS-AID
-`_mcp._agents` record is held back for the same reason.
+`/.well-known/mcp/server-card.json` used to advertise `transport.endpoint`
+`https://jlmx.dev/api/mcp`, a route that has never existed. The card now
+describes what actually runs: tools provided in-page through WebMCP
+(`components/webmcp-provider.tsx`), with every capability also reachable as an
+ordinary HTTPS request, so no MCP client is required.
+
+Publishing a `_mcp._agents` DNS record still waits on a real streamable HTTP
+MCP endpoint. If one is added later, restore `transport.type: "http"` on the
+card and enable the record template in `scripts/publish-dns-aid.ts`.

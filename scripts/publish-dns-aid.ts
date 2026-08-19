@@ -35,9 +35,24 @@ type SvcbRecord = {
 }
 
 /**
- * key65001 carries the capability descriptor locator (`cap=`). The draft marks
- * these SvcParamKeys provisional, so the numeric keyNNNNN form is used until
- * IANA registers a mnemonic.
+ * Marker written into the Cloudflare record comment. apply() only ever updates
+ * a record carrying this marker, so it cannot overwrite an SVCB record that
+ * something else manages at the same owner name.
+ */
+const MANAGED_BY = "managed-by=publish-dns-aid"
+
+/**
+ * key65280 carries the capability descriptor locator (`cap=`).
+ *
+ * The DNS-AID draft defers numeric SvcParamKey assignment to IANA, so `cap`
+ * has no registered codepoint. 65280-65534 is the RFC 9460 Private Use range;
+ * anything below it (the draft's illustrative key65001 included) is Unassigned
+ * and could be allocated to an unrelated parameter, which would make this
+ * record mean something else entirely.
+ *
+ * It is deliberately absent from `mandatory`: cap is advisory here, and a
+ * client that does not recognise the key should still use the record rather
+ * than discard the whole RR.
  */
 const RECORDS: SvcbRecord[] = [
   {
@@ -48,7 +63,7 @@ const RECORDS: SvcbRecord[] = [
       'alpn="h2,http/1.1"',
       "port=443",
       "mandatory=alpn,port",
-      `key65001="cap=https://${ZONE_NAME}/.well-known/ai-catalog.json"`,
+      `key65280="cap=https://${ZONE_NAME}/.well-known/ai-catalog.json"`,
     ].join(" "),
     comment:
       "DNS-AID well-known entry point. Resolves to the ARD capability catalog, which links every other discovery document.",
@@ -121,16 +136,28 @@ async function apply(): Promise<void> {
       type: "SVCB",
       name: record.name,
       ttl: TTL,
-      comment: record.comment,
+      comment: `${record.comment} [${MANAGED_BY}]`,
       data: { priority: record.priority, target: record.target, value: record.params },
     }
 
-    const existing = await cf<Array<{ id: string; name: string }>>(
+    // An SVCB RRset may legitimately hold several ServiceMode records at one
+    // owner name (RFC 9460), so the first result is not necessarily ours.
+    // Only a record we previously wrote carries the marker.
+    const existing = await cf<Array<{ id: string; name: string; comment?: string | null }>>(
       `/zones/${zoneId}/dns_records?type=SVCB&name=${encodeURIComponent(record.name)}`,
     )
+    const managed = existing.filter((r) => r.comment?.includes(MANAGED_BY))
+    const unmanaged = existing.length - managed.length
 
-    if (existing.length > 0) {
-      await cf(`/zones/${zoneId}/dns_records/${existing[0].id}`, {
+    if (managed.length > 1) {
+      throw new Error(
+        `${record.name}: ${managed.length} records carry ${MANAGED_BY}. ` +
+          `Refusing to guess which to update; remove the duplicates first.`,
+      )
+    }
+
+    if (managed.length === 1) {
+      await cf(`/zones/${zoneId}/dns_records/${managed[0].id}`, {
         method: "PUT",
         body: JSON.stringify(payload),
       })
@@ -141,6 +168,12 @@ async function apply(): Promise<void> {
         body: JSON.stringify(payload),
       })
       console.log(`created  ${record.name}`)
+    }
+
+    if (unmanaged > 0) {
+      console.log(
+        `         (left ${unmanaged} unmanaged SVCB record(s) at ${record.name} untouched)`,
+      )
     }
   }
 

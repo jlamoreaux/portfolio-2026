@@ -16,7 +16,7 @@ Generated from `scripts/publish-dns-aid.ts`, which is the source of truth:
 ```dns
 ; DNS-AID well-known entry point. Resolves to the ARD capability catalog,
 ; which links every other discovery document.
-_index._agents.jlmx.dev. 3600 IN SVCB 1 jlmx.dev. alpn="h2,http/1.1" port=443 mandatory=alpn,port key65001="cap=https://jlmx.dev/.well-known/ai-catalog.json"
+_index._agents.jlmx.dev. 3600 IN SVCB 1 jlmx.dev. alpn="h2,http/1.1" port=443 mandatory=alpn,port key65280="cap=https://jlmx.dev/.well-known/ai-catalog.json"
 ```
 
 Reading the record:
@@ -29,7 +29,7 @@ Reading the record:
 | `alpn` | `h2,http/1.1` | Application protocols the endpoint speaks. |
 | `port` | `443` | Service port. |
 | `mandatory` | `alpn,port` | A client that cannot honour these params must not use the record. |
-| `key65001` | `cap=…ai-catalog.json` | Capability descriptor locator. The draft's `cap` SvcParamKey is still provisional, so it is written in the numeric `keyNNNNN` form until IANA registers a mnemonic. |
+| `key65280` | `cap=…ai-catalog.json` | Capability descriptor locator. The draft defers `cap` to a future IANA assignment, so it is written in numeric `keyNNNNN` form — and specifically inside RFC 9460's Private Use range (65280–65534). Unassigned codepoints below that range, including the draft's illustrative `key65001`, may later be allocated to an unrelated parameter. It is left out of `mandatory` on purpose: `cap` is advisory, and a client that does not recognise it should still use the record rather than discard the whole RR. |
 
 ### Records deliberately not published
 
@@ -55,7 +55,7 @@ Optional environment: `CLOUDFLARE_ZONE_NAME` (defaults to `jlmx.dev`) and
 
 If you would rather click through the dashboard: Cloudflare → **DNS** →
 **Add record** → type **SVCB**, name `_index._agents`, priority `1`, target
-`jlmx.dev`, value `alpn="h2,http/1.1" port=443 mandatory=alpn,port key65001="cap=https://jlmx.dev/.well-known/ai-catalog.json"`.
+`jlmx.dev`, value `alpn="h2,http/1.1" port=443 mandatory=alpn,port key65280="cap=https://jlmx.dev/.well-known/ai-catalog.json"`.
 
 ## DNSSEC
 
@@ -71,8 +71,10 @@ resolvers return unsigned (`ad`-less) answers.
 # Record is present
 dig +short _index._agents.jlmx.dev SVCB
 
-# Answer is DNSSEC-authenticated: look for the "ad" flag
-dig +dnssec _index._agents.jlmx.dev SVCB | grep -E 'flags:|SVCB'
+# Answer is DNSSEC-authenticated: look for the "ad" flag.
+# Query a known validating resolver explicitly - a missing "ad" from whatever
+# resolver happens to be configured locally proves nothing.
+dig @1.1.1.1 +dnssec _index._agents.jlmx.dev SVCB | grep -E 'flags:|SVCB'
 
 # Zone is signed end to end
 dig +short jlmx.dev DS @1.1.1.1
