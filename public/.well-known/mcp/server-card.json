@@ -1,18 +1,33 @@
 {
   "serverInfo": {
     "name": "jlmx.dev portfolio",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Personal portfolio and blog for a software developer specializing in AI/ML and full-stack development."
   },
   "transport": {
-    "type": "http",
-    "endpoint": "https://jlmx.dev/api/mcp"
+    "type": "webmcp",
+    "description": "Tools are provided in-page through navigator.modelContext (WebMCP) when a browsing agent loads this site. There is no remote MCP endpoint; the resources below are plain HTTPS GETs that need no MCP client.",
+    "specification": "https://github.com/webmachinelearning/webmcp"
   },
   "capabilities": {
     "resources": true,
-    "tools": false,
+    "tools": true,
     "prompts": false
   },
+  "tools": [
+    {
+      "name": "get_portfolio_page",
+      "description": "Fetch any page of this portfolio as Markdown. Supported paths: /, /blog, /blog/{slug}, /projects, /uses.",
+      "availability": "webmcp",
+      "httpEquivalent": "https://jlmx.dev/api/markdown?path={path}"
+    },
+    {
+      "name": "check_site_health",
+      "description": "Check the operational status of jlmx.dev and its CMS connection.",
+      "availability": "webmcp",
+      "httpEquivalent": "https://jlmx.dev/api/health"
+    }
+  ],
   "resources": [
     {
       "uri": "https://jlmx.dev/",

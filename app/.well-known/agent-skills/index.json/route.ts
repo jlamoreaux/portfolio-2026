@@ -1,56 +1,38 @@
 import { NextResponse } from "next/server"
-import { readFile } from "fs/promises"
-import { join } from "path"
+import { AGENT_SKILLS, skillDigest, skillUrl } from "@/lib/agent-skills"
+import { SITE_URL } from "@/lib/site-url"
 
-async function sha256hex(content: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(content)
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
-}
-
+/**
+ * Agent Skills Discovery index (RFC v0.2.0).
+ *
+ * Skill bodies come from lib/agent-skills.ts rather than the filesystem: the
+ * Cloudflare Workers runtime has no fs, so reading public/ at request time
+ * threw and this endpoint returned 500. Hashing the same string the sibling
+ * route serves also keeps each digest correct by construction.
+ */
 export async function GET() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://jlmx.dev"
+  const siteUrl = SITE_URL
 
-  // Read the actual published markdown files to ensure hash integrity
-  const publicDir = join(process.cwd(), "public", ".well-known", "agent-skills")
-  const [portfolioContent, healthContent] = await Promise.all([
-    readFile(join(publicDir, "portfolio.md"), "utf-8"),
-    readFile(join(publicDir, "health.md"), "utf-8"),
-  ])
+  const skills = await Promise.all(
+    AGENT_SKILLS.map(async (skill) => ({
+      name: skill.name,
+      type: "skill-md" as const,
+      description: skill.description,
+      url: skillUrl(skill, siteUrl),
+      digest: await skillDigest(skill.render(siteUrl)),
+    })),
+  )
 
-  const [portfolioHash, healthHash] = await Promise.all([
-    sha256hex(portfolioContent),
-    sha256hex(healthContent),
-  ])
-
-  const index = {
-    $schema: "https://agentskills.io/schema/v0.2.0/index.json",
-    skills: [
-      {
-        name: "get-portfolio-markdown",
-        type: "skill-file",
-        description:
-          "Fetch any page of this portfolio as clean Markdown via Accept: text/markdown content negotiation.",
-        url: `${siteUrl}/.well-known/agent-skills/portfolio.md`,
-        sha256: portfolioHash,
-      },
-      {
-        name: "health-check",
-        type: "skill-file",
-        description: "Check site and CMS operational status via GET /api/health.",
-        url: `${siteUrl}/.well-known/agent-skills/health.md`,
-        sha256: healthHash,
-      },
-    ],
-  }
-
-  return NextResponse.json(index, {
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "Cache-Control": "public, max-age=3600",
+  return NextResponse.json(
+    {
+      $schema: "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+      skills,
     },
-  })
+    {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "public, max-age=3600",
+      },
+    },
+  )
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { discoveryLinkHeader } from "@/lib/discovery-links"
 
 const MARKDOWN_PATHS = ["/", "/blog", "/projects", "/uses"]
 const BLOG_POST_RE = /^\/blog\/[a-z0-9]+(?:-[a-z0-9]+)*$/i
@@ -46,15 +47,6 @@ function isMarkdownPath(pathname: string) {
   return MARKDOWN_PATHS.includes(pathname) || BLOG_POST_RE.test(pathname)
 }
 
-function getDiscoveryLinkHeader(siteUrl: string) {
-  return [
-    `<${siteUrl}/.well-known/api-catalog>; rel="api-catalog"`,
-    `<${siteUrl}/sitemap.xml>; rel="sitemap"`,
-    `<${siteUrl}/.well-known/agent-skills/index.json>; rel="https://agentskills.io/rel/skills-index"`,
-    `<${siteUrl}/.well-known/mcp/server-card.json>; rel="https://modelcontextprotocol.io/rel/server-card"`,
-  ].join(", ")
-}
-
 function getAgentMarkdown(pathname: string, siteUrl: string) {
   const apiUrl = `${siteUrl}/api/markdown?path=${encodeURIComponent(pathname)}`
 
@@ -70,9 +62,12 @@ I'm a builder focused on enjoyable, accessible web experiences, internal tooling
 - Blog markdown: ${siteUrl}/api/markdown?path=%2Fblog
 - Uses markdown: ${siteUrl}/api/markdown?path=%2Fuses
 - Sitemap: ${siteUrl}/sitemap.xml
+- Capability catalog (ARD): ${siteUrl}/.well-known/ai-catalog.json
+- OpenAPI description: ${siteUrl}/openapi.json
 - API catalog: ${siteUrl}/.well-known/api-catalog
 - MCP server card: ${siteUrl}/.well-known/mcp/server-card.json
 - Agent skills index: ${siteUrl}/.well-known/agent-skills/index.json
+- Authentication policy: ${siteUrl}/auth.md (no auth required)
 
 ## Featured Work
 
@@ -99,9 +94,12 @@ Additional agent discovery:
 
 - Homepage: ${siteUrl}/
 - Sitemap: ${siteUrl}/sitemap.xml
+- Capability catalog (ARD): ${siteUrl}/.well-known/ai-catalog.json
+- OpenAPI description: ${siteUrl}/openapi.json
 - API catalog: ${siteUrl}/.well-known/api-catalog
 - MCP server card: ${siteUrl}/.well-known/mcp/server-card.json
 - Agent skills index: ${siteUrl}/.well-known/agent-skills/index.json
+- Authentication policy: ${siteUrl}/auth.md (no auth required)
 `
 }
 
@@ -112,7 +110,7 @@ export function middleware(request: NextRequest) {
 
   if (!acceptsMarkdown || !isMarkdownPath(pathname)) {
     const response = NextResponse.next()
-    response.headers.set("Link", getDiscoveryLinkHeader(siteUrl))
+    response.headers.set("Link", discoveryLinkHeader(siteUrl))
     // Same URL serves HTML or markdown depending on Accept; let caches key on it.
     response.headers.append("Vary", "Accept")
     return response
@@ -127,7 +125,7 @@ export function middleware(request: NextRequest) {
       "Cache-Control": "private, no-store, max-age=0",
       "CDN-Cache-Control": "no-store",
       "Cloudflare-CDN-Cache-Control": "no-store",
-      "Link": getDiscoveryLinkHeader(siteUrl),
+      "Link": discoveryLinkHeader(siteUrl),
       "Vary": "Accept",
     },
   })

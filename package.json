@@ -9,6 +9,8 @@
     "start": "next start",
     "seed": "tsx -r dotenv/config scripts/seed-data.ts",
     "generate:og": "tsx scripts/generate-og-image.ts",
+    "dns-aid": "tsx -r dotenv/config scripts/publish-dns-aid.ts",
+    "dns-aid:apply": "tsx -r dotenv/config scripts/publish-dns-aid.ts --apply",
     "build:cf": "opennextjs-cloudflare build",
     "preview:cf": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy:cf": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
