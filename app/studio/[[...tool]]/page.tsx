@@ -9,9 +9,25 @@
  * https://github.com/sanity-io/next-sanity
  */
 
-import { NextStudio } from 'next-sanity/studio'
-import config from '../../../sanity.config'
+import dynamic from 'next/dynamic'
+
+// Sanity Studio v6 pulls in @sanity/client v8, whose Node build bundles undici.
+// undici touches globals (MessagePort, FinalizationRegistry) at module load that
+// the Workers runtime doesn't expose at this compatibility date, so SSR of this
+// route crashes on Cloudflare. The Studio is a client-only SPA, so skip SSR.
+const Studio = dynamic(
+  async () => {
+    const [{ NextStudio }, { default: config }] = await Promise.all([
+      import('next-sanity/studio'),
+      import('../../../sanity.config'),
+    ])
+    return function StudioWithConfig() {
+      return <NextStudio config={config} />
+    }
+  },
+  { ssr: false },
+)
 
 export default function StudioPage() {
-  return <NextStudio config={config} />
+  return <Studio />
 }
